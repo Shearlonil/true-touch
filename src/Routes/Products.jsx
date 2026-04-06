@@ -225,10 +225,8 @@ const Products = () => {
                   </div>
                 </Col>
               )}
-            </Row>
 
-            {/* Blood Pressure Monitor */}
-            <Row className="g-4">
+              {/* Blood Pressure Monitor */}
               {(activeCategory === 'All' || activeCategory === 'Devices') && (!searchTerm || 'blood pressure monitor'.toLowerCase().includes(searchTerm.toLowerCase())) && (
                 <Col sm={6} lg={3}>
                   <div className="product-card">
@@ -382,10 +380,7 @@ const Products = () => {
                   </div>
                 </Col>
               )}
-            </Row>
 
-            {/* Third Row of Products */}
-            <Row className="g-4">
               {/* Vitamin C 1000mg */}
               {(activeCategory === 'All' || activeCategory === 'Vitamins') && (!searchTerm || 'vitamin c 1000mg'.toLowerCase().includes(searchTerm.toLowerCase())) && (
                 <Col sm={6} lg={3}>
@@ -539,10 +534,7 @@ const Products = () => {
                   </div>
                 </Col>
               )}
-            </Row>
 
-            {/* Fourth Row of Products */}
-            <Row className="g-4">
               {/* Bandage Roll Set */}
               {(activeCategory === 'All' || activeCategory === 'Medical Supplies') && (!searchTerm || 'bandage roll set'.toLowerCase().includes(searchTerm.toLowerCase())) && (
                 <Col sm={6} lg={3}>
@@ -643,11 +635,11 @@ const Products = () => {
                           <Star size={13} fill="currentColor" />
                           <Star size={13} fill="none" />
                         </div>
-                        <small className="text-muted-custom">(456)</small>
+                        <small className="text-muted-custom">(98)</small>
                       </div>
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="product-price">
-                          {formatNaira(3200)}
+                          {formatNaira(4200)}
                         </div>
                         <button className="btn btn-primary btn-sm" style={{ borderRadius: 8, padding: '6px 12px' }}>
                           <ShoppingCart size={14} />

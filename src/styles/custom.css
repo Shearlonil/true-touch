@@ -383,13 +383,18 @@ a {
   font-weight: 700;
   font-size: 1.15rem;
   color: var(--mc-text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 .product-price .old-price {
   text-decoration: line-through;
   color: var(--mc-text-muted);
   font-weight: 400;
-  font-size: 0.9rem;
-  margin-left: 6px;
+  font-size: 0.8rem;
+  margin-left: 0;
 }
 .star-rating {
   color: var(--mc-accent);
@@ -508,6 +513,63 @@ a {
   margin-top: 40px;
   color: rgba(255,255,255,0.5);
   font-size: 0.85rem;
+}
+
+/* Footer Responsive Styles */
+@media (max-width: 768px) {
+  .footer {
+    padding-top: 40px;
+  }
+  
+  .footer h5 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .footer a {
+    font-size: 0.85rem;
+  }
+  
+  .footer-social-icon {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .footer-bottom {
+    padding: 15px 0;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  
+  .footer-bottom .d-flex {
+    flex-direction: column;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding-top: 30px;
+  }
+  
+  .footer h5 {
+    font-size: 0.95rem;
+    margin-bottom: 0.875rem;
+  }
+  
+  .footer a {
+    font-size: 0.8rem;
+  }
+  
+  .footer-social-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .footer-bottom {
+    padding: 12px 0;
+    font-size: 0.75rem;
+  }
 }
 
 /* ===== Page Headers ===== */

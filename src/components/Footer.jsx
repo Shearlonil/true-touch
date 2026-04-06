@@ -97,6 +97,32 @@ const Footer = () => {
           </div>
         </Container>
       </div>
+      
+      {/* Powered by GCT Section */}
+      <div className="footer-powered" style={{ 
+        backgroundColor: 'rgba(0,0,0,0.2)', 
+        padding: '20px 0', 
+        borderTop: '1px solid rgba(255,255,255,0.1)' 
+      }}>
+        <Container className="d-flex justify-content-center align-items-center gap-3">
+          <span style={{ color: 'rgba(255,255,255,0.7)' }}>Powered by</span>
+          <a 
+            href="https://gctechies.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="d-flex align-items-center gap-2 text-decoration-none"
+          >
+            <img 
+              src={IMAGES.gctLogo} 
+              alt="Genius Computer Technologies" 
+              style={{ width: '60px' }} 
+            />
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>
+            Genius Computer Technologies
+          </span>
+          </a>
+        </Container>
+      </div>
     </footer>
   );
 };

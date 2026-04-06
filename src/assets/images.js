@@ -1,6 +1,7 @@
 const IMAGES = {
     // Home page
     logo: new URL("./imgs/truetouch-logo.png", import.meta.url).href,
+    gctLogo: new URL("./imgs/gct-logo.png", import.meta.url).href,
     hero1: new URL("./imgs/hero-1.jpg", import.meta.url).href,
     hero2: new URL("./imgs/hero-2.jpg", import.meta.url).href,
     hero3: new URL("./imgs/hero-3.jpg", import.meta.url).href,
