@@ -18,29 +18,29 @@ import IMAGES from '../assets/images';
 
 // Custom hook for intersection observer
 const useIntersectionObserver = (options) => {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const ref = useRef(null);
+    const [isIntersecting, setIsIntersecting] = useState(false);
+    const ref = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsIntersecting(true);
-        observer.disconnect();
-      }
-    }, options);
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+              setIsIntersecting(true);
+              observer.disconnect();
+            }
+        }, options);
 
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
 
-    return () => {
-      if (ref.current) {
-        observer.disconnect();
-      }
-    };
-  }, [options]);
+        return () => {
+            if (ref.current) {
+                observer.disconnect();
+            }
+        };
+    }, [options]);
 
-  return [ref, isIntersecting];
+    return [ref, isIntersecting];
 };
 
 // Optimized Gallery Item Component
@@ -148,7 +148,7 @@ const ImageGallery = () => {
         {
           id: 4,
           src: IMAGES.image06,
-          title: 'Prescription Counter',
+          title: 'Drug Dispensation',
           subtitle: 'Professional Service',
           description: 'Our licensed pharmacists ready to assist with prescriptions and health consultations.',
           category: 'Pharmacy'
@@ -180,7 +180,7 @@ const ImageGallery = () => {
         {
           id: 8,
           src: IMAGES.image02,
-          title: 'Consulting',
+          title: 'Enquiries',
           subtitle: 'Private & Comfortable',
           description: 'Private spaces for health consultations and personalized service.',
           category: 'Pharmacy'
