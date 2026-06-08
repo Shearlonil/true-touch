@@ -1,4 +1,3 @@
-import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import HeroCarousel from '../components/HeroCarousel.jsx';
 import FeaturesSection from '../components/FeaturesSection.jsx';
@@ -10,7 +9,6 @@ import CTASection from '../components/CTASection.jsx';
 const Index = () => {
     return (
         <div>
-            <Navbar />
             <main>
                 <HeroCarousel />
                 <FeaturesSection />

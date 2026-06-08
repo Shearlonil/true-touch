@@ -2,44 +2,53 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Table, Nav } from 'react-bootstrap';
 import {
-  LayoutDashboard, Package, ShoppingCart, Users, TrendingUp, DollarSign,
-  Bell, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
-  Clock, Eye, Search, Menu, X
+    LayoutDashboard, Package, ShoppingCart, Users, TrendingUp, DollarSign,
+    Bell, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
+    Clock, Eye, Search, Menu, X
 } from 'lucide-react';
-
-import IMAGES from '../assets/images';
+import IMAGES from '../../../assets/images';
+import OffCanvasSideNav from '../../../components/OffCanvasSideNav';
 
 const stats = [
-  { label: 'Total Revenue', value: '₦7,244,250', change: '+12.5%', up: true, icon: DollarSign, color: 'rgba(var(--mc-primary-rgb), 0.12)', iconColor: 'var(--mc-primary)' },
-  { label: 'Total Orders', value: '1,248', change: '+8.3%', up: true, icon: ShoppingCart, color: 'rgba(var(--mc-accent-rgb), 0.12)', iconColor: 'var(--mc-accent)' },
-  { label: 'Total Customers', value: '3,562', change: '+5.7%', up: true, icon: Users, color: 'rgba(99, 102, 241, 0.12)', iconColor: '#6366f1' },
-  { label: 'Growth Rate', value: '23.8%', change: '-2.1%', up: false, icon: TrendingUp, color: 'rgba(236, 72, 153, 0.12)', iconColor: '#ec4899' },
+    { label: 'Total Revenue', value: '₦7,244,250', change: '+12.5%', up: true, icon: DollarSign, color: 'rgba(var(--mc-primary-rgb), 0.12)', iconColor: 'var(--mc-primary)' },
+    { label: 'Total Orders', value: '1,248', change: '+8.3%', up: true, icon: ShoppingCart, color: 'rgba(var(--mc-accent-rgb), 0.12)', iconColor: 'var(--mc-accent)' },
+    { label: 'Total Customers', value: '3,562', change: '+5.7%', up: true, icon: Users, color: 'rgba(99, 102, 241, 0.12)', iconColor: '#6366f1' },
+    { label: 'Growth Rate', value: '23.8%', change: '-2.1%', up: false, icon: TrendingUp, color: 'rgba(236, 72, 153, 0.12)', iconColor: '#ec4899' },
 ];
 
 const recentOrders = [
-  { id: '#ORD-7821', customer: 'Sarah Johnson', products: 'Vitamin D3, Omega-3', total: '₦31,000', status: 'Delivered', statusColor: 'bg-success' },
-  { id: '#ORD-7820', customer: 'Michael Chen', products: 'First Aid Kit Pro', total: '₦27,500', status: 'Processing', statusColor: 'bg-warning' },
-  { id: '#ORD-7819', customer: 'Emily Rodriguez', products: 'Multivitamin, Sanitizer', total: '₦13,000', status: 'Shipped', statusColor: 'bg-info' },
-  { id: '#ORD-7818', customer: 'David Kim', products: 'Blood Pressure Monitor', total: '₦45,000', status: 'Delivered', statusColor: 'bg-success' },
-  { id: '#ORD-7817', customer: 'Amanda White', products: 'Immune Boost, Vitamin C', total: '₦19,000', status: 'Pending', statusColor: 'bg-secondary' },
-  { id: '#ORD-7816', customer: 'James Brown', products: 'Digital Thermometer', total: '₦8,500', status: 'Delivered', statusColor: 'bg-success' },
+    { id: '#ORD-7821', customer: 'Sarah Johnson', products: 'Vitamin D3, Omega-3', total: '₦31,000', status: 'Delivered', statusColor: 'bg-success' },
+    { id: '#ORD-7820', customer: 'Michael Chen', products: 'First Aid Kit Pro', total: '₦27,500', status: 'Processing', statusColor: 'bg-warning' },
+    { id: '#ORD-7819', customer: 'Emily Rodriguez', products: 'Multivitamin, Sanitizer', total: '₦13,000', status: 'Shipped', statusColor: 'bg-info' },
+    { id: '#ORD-7818', customer: 'David Kim', products: 'Blood Pressure Monitor', total: '₦45,000', status: 'Delivered', statusColor: 'bg-success' },
+    { id: '#ORD-7817', customer: 'Amanda White', products: 'Immune Boost, Vitamin C', total: '₦19,000', status: 'Pending', statusColor: 'bg-secondary' },
+    { id: '#ORD-7816', customer: 'James Brown', products: 'Digital Thermometer', total: '₦8,500', status: 'Delivered', statusColor: 'bg-success' },
 ];
 
 const topProducts = [
-  { name: 'Vitamin D3 Complex', sold: 342, revenue: '₦4,275,000' },
-  { name: 'Omega-3 Fish Oil', sold: 287, revenue: '₦5,309,500' },
-  { name: 'Daily Multivitamin', sold: 264, revenue: '₦2,508,000' },
-  { name: 'First Aid Kit Pro', sold: 198, revenue: '₦5,445,000' },
-  { name: 'Immune Boost Tablets', sold: 176, revenue: '₦2,024,000' },
+    { name: 'Vitamin D3 Complex', sold: 342, revenue: '₦4,275,000' },
+    { name: 'Omega-3 Fish Oil', sold: 287, revenue: '₦5,309,500' },
+    { name: 'Daily Multivitamin', sold: 264, revenue: '₦2,508,000' },
+    { name: 'First Aid Kit Pro', sold: 198, revenue: '₦5,445,000' },
+    { name: 'Immune Boost Tablets', sold: 176, revenue: '₦2,024,000' },
 ];
 
 const sidebarLinks = [
-  { icon: LayoutDashboard, label: 'Dashboard', active: true },
-  { icon: ShoppingCart, label: 'Orders' },
-  { icon: Package, label: 'Products' },
-  { icon: Users, label: 'Customers' },
-  { icon: TrendingUp, label: 'Analytics' },
-  { icon: Settings, label: 'Settings' },
+    { icon: LayoutDashboard, label: 'Dashboard', active: true },
+    { icon: ShoppingCart, label: 'Orders' },
+    { icon: Package, label: 'Products' },
+    { icon: Users, label: 'Customers' },
+    { icon: TrendingUp, label: 'Analytics' },
+    { icon: Settings, label: 'Settings' },
+];
+
+const receiptsOffCanvasMenu = [
+    { icon: LayoutDashboard, label: 'Dashboard', onClickParams: {evtName: 'subMenuOneEvt'} },
+    { icon: ShoppingCart, label: 'Orders', onClickParams: {evtName: 'subMenuOneEvt'} },
+    { icon: Package, label: 'Products', onClickParams: {evtName: 'subMenuOneEvt'} },
+    { icon: Users, label: 'Customers', onClickParams: {evtName: 'subMenuOneEvt'} },
+    { icon: TrendingUp, label: 'Analytics', onClickParams: {evtName: 'subMenuOneEvt'} },
+    { icon: Settings, label: 'Settings', onClickParams: {evtName: 'subMenuOneEvt'} },
 ];
 
 const Dashboard = () => {
@@ -232,6 +241,7 @@ const Dashboard = () => {
           </Row>
         </div>
       </div>
+      <OffCanvasSideNav menuItems={receiptsOffCanvasMenu} />
     </div>
   );
 };

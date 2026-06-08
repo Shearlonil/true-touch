@@ -91,8 +91,16 @@ const Footer = () => {
             <div className="footer-bottom">
                 <Container className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
                     <span>© 2026 Truetouch Pharmacy, Supermarket & Pet Store. All rights reserved.</span>
+                    <span className="d-flex gap-2 justify-content-center align-items-center">
+                        <p className="text-center small mb-0 fw-bold">
+                            Powered By 
+                        </p>
+                        <a href="https://www.gctechies.com" target={"_blank"}>
+                            <img src={IMAGES.gct_logo} alt="" width={98}/>
+                        </a>
+                    </span>
                     <div className="d-flex gap-4">
-                        <a href="#">Privacy Policy</a>
+                        {/* <a href="#">Privacy Policy</a> */}
                         <a href="#">Terms of Service</a>
                     </div>
                 </Container>

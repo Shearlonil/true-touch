@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Heart, Star, ShoppingCart, Search, SlidersHorizontal } from 'lucide-react';
@@ -14,7 +13,6 @@ const Products = () => {
 
   return (
     <div>
-      <Navbar />
       <main>
         {/* Page Header */}
         <section className="page-header">

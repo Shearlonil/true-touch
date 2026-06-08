@@ -1,4 +1,3 @@
-import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Heart, Users, Award, Shield, Target, Leaf, Eye, Handshake } from 'lucide-react';
@@ -6,7 +5,6 @@ import { Heart, Users, Award, Shield, Target, Leaf, Eye, Handshake } from 'lucid
 const About = () => {
   return (
     <div>
-      <Navbar />
       <main>
         {/* Page Header */}
         <section className="page-header">

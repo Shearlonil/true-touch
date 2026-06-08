@@ -2,6 +2,8 @@
 
 :root {
   --mc-primary: #2eb86e;
+  --mc-danger: #fa1414;
+  --mc-danger-dark: #ba0606;
   --mc-primary-light: #4ecf8a;
   --mc-primary-dark: #239b58;
   --mc-primary-rgb: 46, 184, 110;
@@ -51,6 +53,15 @@ a {
   background-color: var(--mc-primary);
   border-color: var(--mc-primary);
 }
+.btn-danger {
+  background-color: var(--mc-danger);
+  border-color: var(--mc-danger);
+}
+.btn-danger:hover, .btn-danger:focus {
+  background-color: var(--mc-danger-dark);
+  border-color: var(--mc-danger-dark);
+  box-shadow: 0 4px 15px rgba(var(--mc-primary-rgb), 0.35);
+}
 .btn-accent {
   background-color: var(--mc-accent);
   border-color: var(--mc-accent);
@@ -63,6 +74,7 @@ a {
 }
 
 .text-primary { color: var(--mc-primary) !important; }
+.text-dark { color: var(--mc-text-dark) !important; }
 .bg-primary { background-color: var(--mc-primary) !important; }
 .text-accent { color: var(--mc-accent) !important; }
 .text-muted-custom { color: var(--mc-text-muted) !important; }

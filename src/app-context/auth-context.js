@@ -1,0 +1,164 @@
+import { createContext, useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { getYear } from "date-fns";
+
+import AppConstants from "../Utils/AppConstants";
+import { useToken } from "./token-context";
+import { useAxiosInterceptor } from "../axios/axios-interceptors";
+
+const AuthContext = createContext();
+
+/*ref:  https://blog.logrocket.com/authentication-react-router-v6/
+        https://blog.logrocket.com/react-context-tutorial/
+*/
+export const AuthProvider = ({ children }) => {
+    // const [jwtToken, setJwtToken] = useLocalStorage(AppConstants.jwtStorageTitle, null);
+    const { xhrAios, setAxiosToken } = useAxiosInterceptor();
+    const { getJwtToken, setJwtTokenValue } = useToken();
+    const accessToken = getJwtToken();
+    const navigate = useNavigate();
+
+    // call this function when you want to authenticate the user
+    const clientLogin = async (loginDetails) => {
+        const response = await xhrAios.post('/auth/client', loginDetails);
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    };
+
+    // call this function when you want to authenticate the user
+    const staffLogin = async (loginDetails) => {
+        const response = await xhrAios.post('/auth/staff', loginDetails);
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    };
+
+    // call this function when clients want to update personal info
+    const updatePersonalInfo = async (signal, data) => {
+        const response = await xhrAios.put(`/users/profile/info/update`, data, {signal});
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    }
+
+    // call this function when staff want to update personal info
+    const updateStaffPersonalInfo = async (signal, data) => {
+        const response = await xhrAios.put(`/staff/profile/info/update`, data, {signal});
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    }
+    
+    // updating client email
+    const updateEmail = async (signal, nano_id) => {
+        const response = await xhrAios.get(`/users/profile/email/update/${nano_id}`, {signal});
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    }
+    
+    // updating staff email
+    const updateStaffEmail = async (signal, nano_id) => {
+        const response = await xhrAios.get(`/staff/profile/email/update/${nano_id}`, {signal});
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    }
+    
+    const updateProfileImg = async (signal, data) => {
+        const response = await xhrAios.post(`/users/profile/dp/update`, data, {signal});
+        //  remove the token prefix from the token for jwtDecode to decode the token
+        const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+        setJwtTokenValue(jwt);
+        /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+            This is a make shift to circumvent the bug
+        */
+        setAxiosToken(jwt);
+    }
+    
+    const verifySubTransaction = async (signal, reqQuery) => {
+        const response = await xhrAios.get(`/transactions/paystack/verification`, {
+            params: {
+                reqQuery
+            }
+        }, {signal});
+        // if token is present in header, then member subscription was made
+        if(response.headers[AppConstants.jwtStorageTitle]){
+            //  remove the token prefix from the token for jwtDecode to decode the token
+            const jwt = response.headers[AppConstants.jwtStorageTitle].replace(AppConstants.TOKEN_PREFIX, "");
+            setJwtTokenValue(jwt);
+            /*  Update token in axios. A Bug detected on signin in, Axios won't attach bearer token to request after first login. Will only start attaching after page refresh.
+                This is a make shift to circumvent the bug
+            */
+            setAxiosToken(jwt);
+        }
+        return response.data;
+    }
+
+    // call this function to sign out logged in user
+    const logout = async (route) => {
+        await xhrAios.get("/auth/logout");
+        setJwtTokenValue(null);
+        if (route) {
+            navigate(route, { replace: true });
+        } else {
+            navigate("/", { replace: true });
+        }
+    };
+    
+    // call this function to sign out logged in user from all devices
+    const logoutAll = async (route) => {
+        await xhrAios.get("/auth/logout/all");
+        setJwtTokenValue(null);
+        if (route) {
+            navigate(route, { replace: true });
+        } else {
+            navigate("/", { replace: true });
+        }
+    };
+
+    const value = useMemo(
+        () => ({
+            clientLogin,
+            staffLogin,
+            updatePersonalInfo,
+            updateStaffPersonalInfo,
+            updateEmail,
+            updateStaffEmail,
+            updateProfileImg,
+            verifySubTransaction,
+            logout,
+            logoutAll,
+        }),
+        [accessToken]
+    );
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => useContext(AuthContext);
