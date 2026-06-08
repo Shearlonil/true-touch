@@ -4,7 +4,6 @@ import { Heart, Users, Award, Shield, Target, Leaf, Eye, Handshake } from 'lucid
 
 const About = () => {
   return (
-    <div>
       <main>
         {/* Page Header */}
         <section className="page-header">
@@ -200,8 +199,6 @@ const About = () => {
           </Container>
         </section>
       </main>
-      <Footer />
-    </div>
   );
 };
 

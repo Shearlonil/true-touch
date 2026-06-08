@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-datetime/css/react-datetime.css";
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 
 createRoot(document.getElementById('root')).render(
     <React.StrictMode>
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')).render(
                         <UserProvider>
                             <Navbar />
                             <App />
+                            <Footer />
                         </UserProvider>
                     </AuthProvider>
                 </TokenProvider>

@@ -1,4 +1,3 @@
-import Footer from '../components/Footer.jsx';
 import HeroCarousel from '../components/HeroCarousel.jsx';
 import FeaturesSection from '../components/FeaturesSection.jsx';
 import ProductsSection from '../components/ProductsSection.jsx';
@@ -17,7 +16,6 @@ const Index = () => {
                 <TestimonialsSection />
                 <CTASection />
             </main>
-            <Footer />
         </div>
     );
 };

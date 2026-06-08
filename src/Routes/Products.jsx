@@ -12,7 +12,6 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   return (
-    <div>
       <main>
         {/* Page Header */}
         <section className="page-header">
@@ -699,8 +698,6 @@ const Products = () => {
           </Container>
         </section>
       </main>
-      <Footer />
-    </div>
   );
 };
 
