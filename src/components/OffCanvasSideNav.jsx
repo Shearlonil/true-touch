@@ -48,7 +48,7 @@ const OffcanvasMenu = ({ menuItems, menuItemClick = () => {}, variant="success" 
                 icon={menu.icon && <Icon />} 
                 onClick={(e) => {
                     handleClose();
-                    menuItemClick(onClickParams, e);
+                    menuItemClick(menu, e);
                 }}> 
                 {menu.label} 
             </Nav.Item>
@@ -66,7 +66,7 @@ const OffcanvasMenu = ({ menuItems, menuItemClick = () => {}, variant="success" 
                         className="mb-1"
                         onClick={(e) => {
                             handleClose();
-                            menuItemClick(onClickParams, e);
+                            menuItemClick(m, e);
                         }}> 
                         {m.label} 
                     </Nav.Item>)

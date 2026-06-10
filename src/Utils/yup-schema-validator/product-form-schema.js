@@ -1,43 +1,18 @@
 import * as yup from "yup";
 
-const storeItemRegSchema = yup.object().shape({
-	section: yup.object().required("Select a section"),
-	item_name: yup.string().required("Item name required!"),
-	barcode: yup.string(),
-	total_qty: yup
-		.number()
-		.positive("Quantity must be positive")
-		.required("Quantity is required"),
-	qty_type: yup.object().required("Select a packaging option"),
-	qty_per_pkg: yup
+const productCreationSchema = yup.object().shape({
+	product_name: yup.string().required("Product name required!"),
+	restock_level: yup
 		.number()
 		.positive("Qty/Pkg must be positive")
 		.required("Qty/Pkg is required"),
-	unit_stock: yup
+	sales_price: yup
 		.number()
-		.positive("Unit Stock Price must be positive")
-		.required("Unit Stock Price is required"),
-	unit_sales: yup
-		.number()
-		.positive("Unit Sales Price must be positive")
-		.required("Unit Sales Price is required"),
-	pkg_stock_price: yup
-		.number()
-		.positive("Pkg Stock Price must be positive")
-		.required("Pkg Stock Price is required"),
-	pkg_sales_price: yup
-		.number()
-		.positive("Pkg Sales Price must be positive")
-		.required("Pkg Sales Price is required"),
-	markup: yup
-		.number()
-		.nullable()
-		.min(0, 'Markup cannot be less than 0')
-		.required("Markup is required"),
-	vendor: yup.object().required("Vendor is required"),
-	amount_paid: yup
-		.number()
-		.required("Amount Paid is required"),
+		.positive("Sales Price must be positive")
+		.required("Sales Price is required"),
+	brand: yup.object().typeError("Select a valid brand"),
+	category: yup.object().typeError("Select a valid category"),
+	tract: yup.object().typeError("Select a valid department"),
 });
 
 const restockSchema = yup.object().shape({
@@ -115,4 +90,4 @@ const purchasesUpdateSchema = yup.object().shape({
 		.required("Amount Paid is required"),
 });
 
-export { storeItemRegSchema, restockSchema, itemUpdateSchema, purchasesUpdateSchema };
+export { productCreationSchema, restockSchema, itemUpdateSchema, purchasesUpdateSchema };

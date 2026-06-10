@@ -60,6 +60,7 @@ const StaffLoginPage = () => {
 
     const onSubmit = async (data) => {
         try {
+            console.log(data);
             setIsLoggingIn(true);
             const pw = cryptoHelper.encrypt(data.pw);
             data.pw = pw;
