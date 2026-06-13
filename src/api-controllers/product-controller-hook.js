@@ -4,18 +4,16 @@ import { useAxiosInterceptor } from '../axios/axios-interceptors';
 const useProductController = () => {
     const { xhrAxios } = useAxiosInterceptor();
 
-    const createProduct = async (signal, name) => {
-        return await xhrAxios.post('/categories/create', null, {
-            params: { brand_name: name }
-        }, {signal});
+    const createProduct = async (signal, data) => {
+        return await xhrAxios.post('/products/create', data, {signal});
     }
     
     const status = async (signal, data) => {
-        return await xhrAxios.put(`/categories/status`, data, {signal});
+        return await xhrAxios.put(`/products/status`, data, {signal});
     }
     
     const renameProduct = async (signal, data) => {
-        return await xhrAxios.put(`/categories/update`, null, {
+        return await xhrAxios.put(`/products/update`, null, {
             params: {
                 name: data.name,
                 id: data.id
@@ -24,11 +22,11 @@ const useProductController = () => {
     }
     
     const activeProductPageInit = async (signal, pageSize) => {
-        return await xhrAxios.get(`/categories/active/init/${pageSize}`, {signal});
+        return await xhrAxios.get(`/products/active/init/${pageSize}`, {signal});
     }
     
     const paginateFetch = async (signal, data) => {
-        return await xhrAxios.get(`/categories/search/page/${data.page}`, {
+        return await xhrAxios.get(`/products/search/page/${data.page}`, {
             params: {
                 pageSize: data.pageSize, status: data.catStatus, page: data.page
             }
@@ -36,7 +34,7 @@ const useProductController = () => {
     }
     
     const productSearch = async (signal, data) => {
-        return await xhrAxios.get(`/categories/query`, {
+        return await xhrAxios.get(`/products/query`, {
             params: {
                 str: data.inputValue, status: data.catStatus
             }

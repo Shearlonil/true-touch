@@ -2,17 +2,23 @@ import * as yup from "yup";
 
 const productCreationSchema = yup.object().shape({
 	product_name: yup.string().required("Product name required!"),
-	restock_level: yup
-		.number()
-		.positive("Qty/Pkg must be positive")
-		.required("Qty/Pkg is required"),
+	barcode: yup
+		.string()
+		.optional()
+		.nullable()
+		.transform((curr, orig) => (orig === '' ? null : curr)),
+		// .matches(/^[0-9]{10}$/, 'Must be exactly 10 digits'),
 	sales_price: yup
 		.number()
 		.positive("Sales Price must be positive")
 		.required("Sales Price is required"),
-	brand: yup.object().typeError("Select a valid brand"),
-	category: yup.object().typeError("Select a valid category"),
+	brand: yup.object().typeError("Select a valid brand").optional().nullable(),
+	category: yup.object().typeError("Select a valid category").optional().nullable(),
 	tract: yup.object().typeError("Select a valid department"),
+	// restock_level: yup
+	// 	.number()
+	// 	.positive("Restock level must be positive")
+	// 	.required("Restock level is required"),
 });
 
 const restockSchema = yup.object().shape({

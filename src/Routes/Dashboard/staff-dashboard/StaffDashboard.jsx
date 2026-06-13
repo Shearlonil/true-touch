@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Row, Col, Table } from 'react-bootstrap';
+import { Row, Col, Table, Modal } from 'react-bootstrap';
 import {
     LayoutDashboard, Package, ShoppingCart, Users, TrendingUp, DollarSign,
     UserPen, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
@@ -21,6 +21,8 @@ import useStaffController from '../../../api-controllers/staff-controller-hook';
 import useTractController from '../../../api-controllers/tract-controller-hook';
 import useProductBrandController from '../../../api-controllers/product-brand-controller-hook';
 import useProductCategoryController from '../../../api-controllers/product-cat-controller-hook';
+import ProductCreationForm from '../../../components/Forms/ProductCreationForm';
+import useProductController from '../../../api-controllers/product-controller-hook';
 
 const stats = [
     { label: 'Total Revenue for the Month', value: '₦7,244,250', change: '+12.5%', up: true, icon: DollarSign, color: 'rgba(var(--mc-primary-rgb), 0.12)', iconColor: 'var(--mc-primary)' },
@@ -133,6 +135,7 @@ const Dashboard = () => {
     const { createTract } = useTractController();
     const { createProductBrand } = useProductBrandController();
     const { createProductCat } = useProductCategoryController();
+    const { createProduct } = useProductController();
     const { authUser } = useAuthUser();
     const user = authUser();
 
@@ -141,6 +144,7 @@ const Dashboard = () => {
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [confirmDialogEvtName, setConfirmDialogEvtName] = useState(null);
     const [showStaffCreationModal, setShowStaffCreationModal] = useState(false);
+    const [showProductCreationModal, setShowProductCreationModal] = useState(false);
 
     const [networkRequest, setNetworkRequest] = useState(false);
     const [totalRevenue, setTotalRevenue] = useState(0);
@@ -184,8 +188,11 @@ const Dashboard = () => {
     }
 
     const handleAddStaff = () => {
-        setDisplayMsg('Add New Staff');
         setShowStaffCreationModal(true);
+    }
+
+    const handleAddProduct = () => {
+        setShowProductCreationModal(true);
     }
 
 	const handleOffCanvasMenuItemClick = async (menus, e) => {
@@ -220,7 +227,11 @@ const Dashboard = () => {
                 handleAddStaff();
                 break;
             case 'addProduct':
-                navigate('/dashboard/users');
+                if(!user.hasAuth(200)){
+                    toast.info('Account not authorized');
+                    return;
+                }
+                handleAddProduct();
                 break;
             case 'addBrand':
                 if(!user.hasAuth(203)){
@@ -315,6 +326,7 @@ const Dashboard = () => {
 		setShowInputModal(false);
         setShowStaffCreationModal(false);
         setShowConfirmModal(false);
+        setShowProductCreationModal(false);
     };
 	
 	const handleInputOK = async (str) => {
@@ -381,6 +393,36 @@ const Dashboard = () => {
             toast.error(handleErrMsg(error).msg);
         }
     }
+	
+	const fnCreateProduct = async (item) => {
+		try {
+			setNetworkRequest(true);
+            resetAbortController();
+            const data = {
+                product_name: item.productName,
+                barcode: item.barcode,
+                expDate: item.expDate,
+                tract: item.tract.id,
+                sales_price: item.unitSalesPrice,
+                restock_level: 1,
+                brand: item.brand?.id,
+                category: item.category?.id,
+            }
+			await createProduct(controllerRef.current.signal, data);
+            toast.info('Product creation successful');
+			setNetworkRequest(false);
+		} catch (error) {
+            setNetworkRequest(false);
+            if (error.name === 'AbortError' || error.name === 'CanceledError' || (error.response?.status === 500 && error.response?.data.message === "Invalid Token received!")) {
+                // Request was intentionally aborted or Invalid Bearer Token received which requires refresh, handle silently
+                return;
+            }
+            // display error message
+            toast.error(handleErrMsg(error).msg);
+            // throw error to prevent ProductScreationForm from clearing fields
+            throw error;
+		}
+	}
 
     const resetAbortController = () => {
         // Cancel previous request if it exists
@@ -541,6 +583,14 @@ const Dashboard = () => {
 				handleConfirm={handleConfirm}
 				message={displayMsg}
 			/>
+			<Modal backdrop='static' show={showProductCreationModal} onHide={handleCloseModal}>
+				<Modal.Header closeButton>
+					<Modal.Title className='text-primary fw-bold'>Product Details</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+                    <ProductCreationForm handleClose={handleCloseModal} fnSave={fnCreateProduct} networkRequest={networkRequest} />
+				</Modal.Body>
+			</Modal>
         </div>
     );
 };
