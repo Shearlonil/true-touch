@@ -3,20 +3,24 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Row, Col, Table } from 'react-bootstrap';
 import {
     LayoutDashboard, Package, ShoppingCart, Users, TrendingUp, DollarSign,
-    Bell, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
+    UserPen, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
     Clock, Eye, Search, Menu, X, LayoutPanelTop
 } from 'lucide-react';
 import { SiBrandfetch } from "react-icons/si";
 import { MdOutlineCategory } from "react-icons/md";
+import { toast } from 'react-toastify';
 
-import IMAGES from '../../../assets/images';
 import OffCanvasSideNav from '../../../components/OffCanvasSideNav';
 import { useAuthUser } from '../../../app-context/user-context';
 import cryptoHelper from '../../../Utils/crypto-helper';
-import useStaffController from '../../../api-controllers/staff-controller-hook';
 import InputDialog from '../../../components/DialogBoxes/InputDialog';
 import StaffCreationDialog from '../../../components/DialogBoxes/StaffCreationDialog';
 import ConfirmDialog from '../../../components/DialogBoxes/ConfirmDialog';
+import handleErrMsg from '../../../Utils/error-handler';
+import useStaffController from '../../../api-controllers/staff-controller-hook';
+import useTractController from '../../../api-controllers/tract-controller-hook';
+import useProductBrandController from '../../../api-controllers/product-brand-controller-hook';
+import useProductCategoryController from '../../../api-controllers/product-cat-controller-hook';
 
 const stats = [
     { label: 'Total Revenue for the Month', value: '₦7,244,250', change: '+12.5%', up: true, icon: DollarSign, color: 'rgba(var(--mc-primary-rgb), 0.12)', iconColor: 'var(--mc-primary)' },
@@ -116,7 +120,7 @@ const offCanvasMenu = [
         ]
     },
     { icon: Users, label: 'Customers', onClickParams: {evtName: 'customers'} },
-    // { icon: Settings, label: 'Settings', onClickParams: {evtName: 'subMenuOneEvt'} },
+    { icon: UserPen, label: 'Profile', onClickParams: {evtName: 'myProfile'} },
 ];
 
 const Dashboard = () => {
@@ -126,6 +130,9 @@ const Dashboard = () => {
     const location = useLocation();
 
     const { dashboard, register } = useStaffController();
+    const { createTract } = useTractController();
+    const { createProductBrand } = useProductBrandController();
+    const { createProductCat } = useProductCategoryController();
     const { authUser } = useAuthUser();
     const user = authUser();
 
@@ -141,6 +148,7 @@ const Dashboard = () => {
     const [totalCustomers, setTotalCustomers] = useState(0);
     const [totalProducts, setTotalProducts] = useState(0);
     const [newUser, setNewUser] = useState(null);
+    const [inputMode, setInputMode] = useState(null);
 
     useEffect(() => {
         if(!user || cryptoHelper.decryptData(user.mode) === '1'){
@@ -183,13 +191,17 @@ const Dashboard = () => {
 	const handleOffCanvasMenuItemClick = async (menus, e) => {
 		switch (menus.onClickParams.evtName) {
             case 'viewStaff':
+                if(!user.hasAuth(103)){
+                    toast.info('Account not authorized to create staff profile');
+                    return;
+                }
                 navigate('/dashboard/users');
                 break;
             case 'orders':
                 navigate('/dashboard/orders');
                 break;
             case 'viewDepartments':
-                navigate('/dashboard/users');
+                navigate('/dashboard/departments');
                 break;
             case 'viewBrands':
                 navigate('/dashboard/brands');
@@ -201,19 +213,44 @@ const Dashboard = () => {
                 navigate('/dashboard/categories');
                 break;
             case 'addStaff':
+                if(!user.hasAuth(101)){
+                    toast.info('Account not authorized to create staff profile');
+                    return;
+                }
                 handleAddStaff();
                 break;
             case 'addProduct':
                 navigate('/dashboard/users');
                 break;
             case 'addBrand':
-                navigate('/dashboard/brands');
+                if(!user.hasAuth(203)){
+                    toast.info('Account not authorized');
+                    return;
+                }
+                setDisplayMsg('Enter New Product Brand');
+                setInputMode('brand');
+                setShowInputModal(true);
                 break;
             case 'addCategory':
-                navigate('/dashboard/staff/membership/plans');
+                if(!user.hasAuth(206)){
+                    toast.info('Account not authorized');
+                    return;
+                }
+                setDisplayMsg('Enter New Product Category');
+                setInputMode('category');
+                setShowInputModal(true);
                 break;
             case 'addDepartment':
-                navigate('/dashboard/categories');
+                if(!user.hasAuth(209)){
+                    toast.info('Account not authorized');
+                    return;
+                }
+                setDisplayMsg('Enter New Product Department');
+                setInputMode('tract');
+                setShowInputModal(true);
+                break;
+            case 'myProfile':
+                navigate('/dashboard/profile');
                 break;
         }
 	}
@@ -281,7 +318,69 @@ const Dashboard = () => {
     };
 	
 	const handleInputOK = async (str) => {
+        switch (inputMode) {
+            case "brand":
+                await handleCreateBrand(str);
+                break;
+            case "category":
+                await handleCreateCategory(str);
+                break;
+            case "tract":
+                await handleCreateTract(str);
+                break;
+        }
 	}
+
+    const handleCreateBrand = async (str) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await createProductBrand(controllerRef.current.signal, str);
+            toast.info(`${str} successfully created`);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    }
+
+    const handleCreateCategory = async (str) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await createProductCat(controllerRef.current.signal, str);
+            toast.info(`${str} successfully created`);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    }
+
+    const handleCreateTract = async (str) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await createTract(controllerRef.current.signal, str);
+            toast.info(`${str} successfully created`);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    }
 
     const resetAbortController = () => {
         // Cancel previous request if it exists
@@ -430,6 +529,7 @@ const Dashboard = () => {
                 setNetworkREquest={setNetworkRequest}
 			/>
             <InputDialog
+                networkRequest={networkRequest}
                 show={showInputModal}
                 handleClose={handleCloseModal}
                 handleConfirm={handleInputOK}

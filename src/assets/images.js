@@ -2,6 +2,7 @@ const IMAGES = {
     // Home page
     logo: new URL("./imgs/truetouch-logo.png", import.meta.url).href,
     gct_logo: new URL("./imgs/gct-logo-no-text.png", import.meta.url).href,
+    staff_management: new URL("./imgs/management.png", import.meta.url).href,
     hero1: new URL("./imgs/hero-1.jpg", import.meta.url).href,
     hero2: new URL("./imgs/hero-2.jpg", import.meta.url).href,
     hero3: new URL("./imgs/hero-3.jpg", import.meta.url).href,
@@ -21,7 +22,8 @@ const IMAGES = {
     image68: new URL("./imgs/image-68.jpg", import.meta.url).href,
 
     ////////////// SVGs
-    // svg_fans_SECONDARY: new URL("./Svg/undraw_fans_SECONDARY.svg", import.meta.url).href,
+    svg_user: new URL("./svg/user-svgrepo-com.svg", import.meta.url).href,
+    tracts: new URL("./svg/branch_colored_one.svg", import.meta.url).href,
     // svg_fans: new URL("./Svg/undraw_fans.svg", import.meta.url).href,
     // svg_golf_SECONDARY: new URL("./Svg/undraw_golf_SECONDARY.svg",import.meta.url ).href,
     // svg_golf: new URL("./Svg/undraw_golf.svg", import.meta.url).href,

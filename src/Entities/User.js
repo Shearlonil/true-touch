@@ -12,6 +12,7 @@ export default class User {
                 status: whom.status,
                 email: whom.email,
                 phone: whom.phone,
+                sex: whom.sex,
                 mode: whom.mode,
                 regDate: whom.regDate,
                 roles: whom.roles,
@@ -42,6 +43,9 @@ export default class User {
 
     get mode() { return _userProps.get(this).mode }
     set mode(mode) { _userProps.get(this).mode = mode }
+
+    get sex() { return _userProps.get(this).sex }
+    set sex(sex) { _userProps.get(this).sex = sex }
 
     get regDate() { return _userProps.get(this).regDate }
     set regDate(regDate) { _userProps.get(this).regDate = regDate }

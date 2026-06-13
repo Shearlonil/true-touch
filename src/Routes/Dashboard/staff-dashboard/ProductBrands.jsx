@@ -1,0 +1,538 @@
+import { useEffect, useRef, useState } from "react";
+import { Button, Row } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { SiBrandfetch } from "react-icons/si";
+import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
+import { IoMdAddCircle } from "react-icons/io";
+import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc';
+import { TbRestore } from "react-icons/tb";
+import { Table, IconButton, Input, NumberInput, DatePicker } from 'rsuite';
+const { Column, HeaderCell, Cell } = Table;
+
+import { useAuthUser } from "../../../app-context/user-context";
+import handleErrMsg from "../../../Utils/error-handler";
+import IMAGES from "../../../assets/images";
+import PaginationLite from "../../../components/PaginationLite";
+import ConfirmDialog from "../../../components/DialogBoxes/ConfirmDialog";
+import { pageSizeOptions, statusOptions } from "../../../Utils/data";
+import RsuiteTableSkeletonLoader from "../../../components/RsuiteTableSkeletonLoader";
+import useProductBrandController from "../../../api-controllers/product-brand-controller-hook";
+import InputDialog from "../../../components/DialogBoxes/InputDialog";
+
+const columns = [
+    {
+        key: 'name',
+        label: 'Name',
+        fixed: true,
+        flexGrow: 2,
+        // width: 200
+    },
+    {
+        key: 'fname',
+        label: 'Creator',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'createdAt',
+        label: 'Created At',
+        flexGrow: 1,
+        // width: 100
+    },
+];
+
+function toValueString(value, dataType) {
+    return (dataType === 'date') ? value?.toLocaleDateString() : value;
+}
+
+const fieldMap = {
+    string: Input,
+    number: NumberInput,
+    date: DatePicker
+};
+
+const EditableCell = ({ rowData, dataType, dataKey, onChange, onEdit, ...props }) => {
+    const editing = rowData.mode === 'EDIT';
+
+    const Field = fieldMap[dataType];
+    const value = rowData[dataKey];
+    const text = toValueString(value, dataType);
+
+    return (
+        <Cell
+            {...props}
+            className={editing ? 'table-cell-editing' : ''}
+            onDoubleClick={() => {
+                onEdit?.(rowData.id);
+            }}
+        >
+            {editing ? (
+                <Field
+                    defaultValue={value}
+                    onChange={value => {
+                        onChange?.(rowData.id, dataKey, value);
+                    }}
+                />
+            ) : (
+                text
+            )}
+        </Cell>
+    );
+};
+
+const ActionCell = ({ rowData, dataKey, onEdit, changeStatus, onRestore, onSave, ...props }) => {
+    return (
+        <Cell {...props} style={{ padding: '6px', display: 'flex', gap: '4px', width: '400px' }}>
+            <IconButton appearance="subtle" icon={rowData.mode === 'EDIT' ? <VscSave /> : <VscEdit />} onClick={() => { onEdit(rowData.id); }}/>
+            <IconButton appearance="subtle" icon={rowData.status == true ? <VscRemove /> : <TbRestore />} onClick={() => { changeStatus(rowData); }}  />
+            <IconButton icon={<VscSave color='green' />} onClick={() => { onSave(rowData); }}  />
+        </Cell>
+  );
+};
+
+const ProductBrand = () => {
+    const controllerRef = useRef(new AbortController());
+    
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const { paginateFetch, productBrandSearch, status, renameProductBrand, createProductBrand, activeProductBrandPageInit } = useProductBrandController();
+    const { authUser } = useAuthUser();
+    const user = authUser();
+
+    const [networkRequest, setNetworkRequest] = useState(false);
+    const [brandOptions, setBrandOptions] = useState([]);
+    const [brandStatus, setBrandStatus] = useState(true);
+	const [displayMsg, setDisplayMsg] = useState("");
+    const [confirmDialogEvtName, setConfirmDialogEvtName] = useState(null);
+    const [editedBrand, setEditedBrand] = useState(null);
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
+	const [showInputModal, setShowInputModal] = useState(false);
+        
+    //	for pagination
+    const [pageSize, setPageSize] = useState(pageSizeOptions[2].value);
+    const [totalItemsCount, setTotalItemsCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    
+    //  data returned from DataPagination
+    const [brands, setBrands] = useState([]);
+    
+    useEffect(() => {
+        if(!user){
+            navigate("/");
+            return;
+        }
+
+        initialize();
+        return () => {
+            // This cleanup function runs when the component unmounts or when the dependencies of useEffect change (e.g., route change)
+            controllerRef.current.abort();
+        };
+    }, [location.pathname]);
+
+    const initialize = async () => {
+        try {
+            controllerRef.current = new AbortController();
+            setNetworkRequest(true);
+            const response = await activeProductBrandPageInit(controllerRef.current.signal, pageSize);
+
+            //	check if the request to fetch brand doesn't fail before setting values to display
+            if(response && response.data){
+                const { count, results } = response.data;
+                setBrandOptions(results?.map(brand => ({label: brand.name, value: brand})));
+                if(results && count){
+                    setBrands(results);
+                    setTotalItemsCount(count);
+                }
+            }
+
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const asyncBrandSearch = async (inputValue, callback) => {
+        /*  refs: https://stackoverflow.com/questions/65963103/how-can-i-setup-react-select-to-work-correctly-with-server-side-data-by-using  */
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            const response = await productBrandSearch(controllerRef.current.signal, {inputValue, brandStatus});
+            const results = response.data.map(brand => ({label: brand.name, value: brand}));
+            setBrandOptions(results);
+            setBrands(response.data);
+            setTotalItemsCount(0);
+            setNetworkRequest(false);
+            callback(results);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const handleBrandChange = (val) => {
+        setTotalItemsCount(0);
+        setBrands( val ? [val.value] : [] );
+    };
+
+    const handleStatusChange = async (val) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            const response = await paginateFetch(controllerRef.current.signal, {page: 1, pageSize, brandStatus: val.value});
+            const { count, results } = response.data;
+            setBrandOptions(results.map(brand => ({label: brand.name, value: brand})));
+            setBrands(results);
+            setCurrentPage(1);
+            setTotalItemsCount(count);
+            setBrandStatus(val.value);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const handlePageSizeChanged = async (val) => {
+        // whenever page size changes, make a fresh request using necessary params
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            const response = await paginateFetch(controllerRef.current.signal, {page: 1, pageSize: val.value, brandStatus});
+            const { count, results } = response.data;
+            setBrandOptions(results.map(brand => ({label: brand.name, value: brand})));
+            setBrands(results);
+            setCurrentPage(1);
+            setTotalItemsCount(count);
+            setPageSize(val.value);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const setPageChanged = async (pageNumber) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            const response = await paginateFetch(controllerRef.current.signal, {page: pageNumber, pageSize, brandStatus});
+            const { count, results } = response.data;
+            setBrandOptions(results.map(brand => ({label: brand.name, value: brand})));
+            setBrands(results);
+            setCurrentPage(pageNumber);
+            setTotalItemsCount(count);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+	const restoreBrand = async () => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await status(controllerRef.current.signal, {id: editedBrand.id, status: true});
+            setBrands(brands.filter(brand => editedBrand.id !== brand.id));
+            setTotalItemsCount(brands.length - 1);
+            setEditedBrand(null);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+    
+    const delBrand = async () => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await status(controllerRef.current.signal, {id: editedBrand.id, status: false});
+            setBrands(brands.filter(brand => editedBrand.id !== brand.id));
+            setTotalItemsCount(brands.length - 1);
+            setEditedBrand(null);
+            setNetworkRequest(false);
+        } catch (error) {
+            setNetworkRequest(false);
+            if (error.name === 'AbortError' || error.name === 'CanceledError' || (error.response?.status === 500 && error.response?.data.message === "Invalid Token received!")) {
+                // Request was intentionally aborted or Invalid Bearer Token received which requires refresh, handle silently
+                return;
+            }
+            // display error message
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const handleChangeStatus = brand => {
+        if(!user.hasAuth(204)){
+            toast.info('Account not authorized');
+            return;
+        }
+        if(brand.status){
+            setConfirmDialogEvtName('remove');
+            setDisplayMsg(`Delete ${brand.name} from active list?`);
+            setShowConfirmModal(true);
+            setEditedBrand(brand);
+        }else {
+            setConfirmDialogEvtName('restore');
+            setDisplayMsg(`Restore ${brand.name} from list of inactive brands?`);
+            setShowConfirmModal(true);
+            setEditedBrand(brand);
+        }
+    };
+
+    const updateBrand = async () => {
+        if(!user.hasAuth(205)){
+            toast.info('Account not authorized');
+            return;
+        }
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await renameProductBrand(controllerRef.current.signal, {id: editedBrand.id, name: editedBrand.name});
+            setEditedBrand(null);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    }
+
+    const handleChange = (id, key, value) => {
+        const nextData = Object.assign([], brands);
+        nextData.find(item => item.id === id)[key] = value;
+        setBrands(nextData);
+    };
+
+    const handleEdit = id => {
+        const nextData = Object.assign([], brands);
+        const activeItem = nextData.find(item => item.id === id);
+
+        activeItem.mode = activeItem.mode ? null : 'EDIT';
+
+        setBrands(nextData);
+    };
+  
+    const handleSave = async (brand) => {
+        setConfirmDialogEvtName('save');
+        setDisplayMsg(`Save changes made to ${brand.name}?`);
+        setShowConfirmModal(true);
+        setEditedBrand(brand);
+    };
+
+    const handleAddBrand = () => {
+        if(!user.hasAuth(203)){
+            toast.info('Account not authorized');
+            return;
+        }
+        setDisplayMsg('Add New Department');
+        setShowInputModal(true);
+    }
+
+	const handleCloseModal = () => {
+        setShowConfirmModal(false);
+        setShowInputModal(false);
+    };
+  
+    const handleConfirm = async () => {
+        setShowConfirmModal(false);
+        switch (confirmDialogEvtName) {
+            case "remove":
+                delBrand();
+                break;
+            case "restore":
+                restoreBrand();
+                break;
+            case 'save':
+                updateBrand();
+                break;
+        }
+    };
+	
+	const handleInputOK = async (str) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            const response = await createProductBrand(controllerRef.current.signal, str);
+            const t = response.data;
+            t.fname = user.firstName;
+            setBrands([...brands, t]);
+            setShowInputModal(false);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+	};
+
+    const resetAbortController = () => {
+        // Cancel previous request if it exists
+        if (controllerRef.current) {
+            controllerRef.current.abort();
+        }
+        controllerRef.current = new AbortController();
+    };
+
+    return (
+        <section className='container d-flex flex-column gap-4' style={{minHeight: '60vh'}}>
+            <Row className='d-flex align-items-center'>
+                <div className="d-flex flex-wrap gap-4 align-items-center col-12 col-md-10 mt-4" >
+                    <img src={IMAGES.svg_user} alt ="Avatar" className="rounded-circle" width={100} height={100} />
+                    <div className="d-flex flex-wrap gap-2 fw-bold h2">
+                        <span>{user.firstName}</span>
+                        <span> {user.lastName}</span>
+                    </div>
+                </div>
+                <div className=" col-12 col-md-2 mt-4">
+                    <Button variant="success fw-bold d-flex gap-3 align-items-center justify-content-center" className="w-100" onClick={handleAddBrand}>
+                        <IoMdAddCircle size='32px' /> Add
+                    </Button>
+                </div>
+            </Row>
+            {/* NOTE: setting z-index of this row because of rsuite table which conflicts the drop down menu of react-select */}
+            <Row className="card shadow border-0 rounded-3 z-3">
+                <div className="card-body row ms-0 me-0">
+                    <div className="d-flex gap-2 align-items-center col-12 col-md-5 mb-3">
+                        <SiBrandfetch size={'35px'} color="red" className="shadow" />
+                        <span className="text-danger fw-bold h2 text-truncate">Product Brands</span>
+                    </div>
+
+                    <div className="d-flex flex-column gap-2 align-items-center col-12 col-md-3 mb-3">
+                        <span className="align-self-start fw-bold">Search</span>
+                        <AsyncSelect
+                            className="text-dark w-100"
+                            isClearable
+                            // getOptionLabel={getOptionLabel}
+                            getOptionValue={(option) => option}
+                            // defaultValue={initialObject}
+                            defaultOptions={brandOptions}
+                            cacheOptions
+                            loadOptions={asyncBrandSearch}
+                            onChange={(val) => handleBrandChange(val) }
+                        />
+                    </div>
+
+                    <div className="d-flex gap-4 align-items-center justify-content-end col-12 col-md-4 mb-3">
+                        <div className="d-flex flex-column w-50 gap-2">
+                            <span className="align-self-start fw-bold">Status</span>
+                            <Select
+                                required
+                                name="filter"
+                                placeholder="Filter..."
+                                className="text-dark w-100"
+                                defaultValue={statusOptions[0]}
+                                options={statusOptions}
+                                onChange={(val) => { handleStatusChange(val) }}
+                            />
+                        </div>
+                        <div className="d-flex flex-column w-50 gap-2">
+                            <span className="align-self-start fw-bold">Page Size</span>
+                            <Select
+                                required
+                                name="filter"
+                                placeholder="Filter..."
+                                className="text-dark w-100"
+                                defaultValue={pageSizeOptions[2]}
+                                options={pageSizeOptions}
+                                onChange={(val) => { handlePageSizeChanged(val) }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </Row>
+
+            <Table loading={networkRequest} rowKey="id" data={brands} affixHeader affixHorizontalScrollbar 
+                renderLoading={() => <RsuiteTableSkeletonLoader withPlaceholder={true} rows={10} cols={5} />} 
+                autoHeight={true} hover={true}>
+                    
+                {columns.map((column, idx) => {
+                    const { key, label, ...rest } = column;
+                    if(idx < 1){
+                        return (
+                            <Column {...rest} key={key}>
+                                <HeaderCell>{label}</HeaderCell>
+                                <EditableCell
+                                    fullText
+                                    dataKey={key}
+                                    dataType="string"
+                                    onChange={handleChange}
+                                    onEdit={handleEdit}
+                                    style={{ padding: 6 }}
+                                />
+                            </Column>
+                        )
+                    }
+                    return (
+                        <Column {...rest} key={key} fullText>
+                            <HeaderCell>{label}</HeaderCell>
+                            <Cell dataKey={key} style={{ padding: 6 }} />
+                        </Column>
+                    );
+                })}
+                <Column width={150} >
+                    <HeaderCell>Actions...</HeaderCell>
+                    <ActionCell changeStatus={handleChangeStatus} onEdit={handleEdit} onSave={handleSave} />
+                </Column>
+            </Table>
+            <Row className="mt-3">
+                <PaginationLite
+                    itemCount={totalItemsCount}
+                    pageSize={pageSize}
+                    setPageChanged={setPageChanged}
+                    pageNumber={currentPage}
+                />
+            </Row>
+			<ConfirmDialog
+				show={showConfirmModal}
+				handleClose={handleCloseModal}
+				handleConfirm={handleConfirm}
+				message={displayMsg}
+			/>
+            <InputDialog
+                show={showInputModal}
+                handleClose={handleCloseModal}
+                handleConfirm={handleInputOK}
+                message={displayMsg}
+                networkRequest={networkRequest}
+            />
+        </section>
+    )
+}
+
+export default ProductBrand;

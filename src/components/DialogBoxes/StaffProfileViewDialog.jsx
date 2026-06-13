@@ -120,7 +120,7 @@ const StaffProfileViewDialog = ({ show, handleClose, handleConfirm, message, net
     ));
 
     return (
-        <Modal show={show} onHide={handleClose} onEntered={modalLoaded} onExited={handleModalExited}>
+        <Modal backdrop='static' show={show} onHide={handleClose} onEntered={modalLoaded} onExited={handleModalExited}>
             <Modal.Header closeButton>
                 <Modal.Title>{message}</Modal.Title>
             </Modal.Header>

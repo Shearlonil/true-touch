@@ -32,12 +32,12 @@ const ProductCreationForm = (props) => {
 	const [tractsLoading, setTractsLoading] = useState(true);
 
 	// for pkg
-	const [pkgOptions, setPkgOptions] = useState([]);
-	const [pkgLoading, setPkgLoading] = useState(true);
+	const [pkgOptions, setBrandOptions] = useState([]);
+	const [pkgLoading, setBrandLoading] = useState(true);
 
 	// for vendors
-	const [vendorOptions, setVendorOptions] = useState([]);
-	const [vendorsLoading, setVendorsLoading] = useState(true);
+	const [vendorOptions, setCatOptions] = useState([]);
+	const [vendorsLoading, setCatsLoading] = useState(true);
 	
 	//	for form calculation
 	const [totalQty, setTotalQty] = useState(0);
@@ -79,16 +79,16 @@ const ProductCreationForm = (props) => {
             const response = await performGetRequests(urls, controllerRef.current.signal);
             const { 0: brandRequest, 1: categoryRequest, 2: tractRequest } = response;
 
-            //	check if the request to fetch pkg doesn't fail before setting values to display
+            //	check if the request to fetch brand doesn't fail before setting values to display
             if(brandRequest){
-                setPkgLoading(false);
-				setPkgOptions(brandRequest.data.map( pkg => ({label: pkg.name, value: pkg.id})));
+                setBrandLoading(false);
+				setBrandOptions(brandRequest.data.map( brand => ({label: brand.name, value: brand.id})));
             }
 
-            //	check if the request to fetch vendors doesn't fail before setting values to display
+            //	check if the request to fetch categories doesn't fail before setting values to display
             if(categoryRequest){
-				setVendorsLoading(false);
-                setVendorOptions(categoryRequest.data.map( vendor => ({label: vendor.name, value: vendor.id})));
+				setCatsLoading(false);
+                setCatOptions(categoryRequest.data.map( vendor => ({label: vendor.name, value: vendor.id})));
             }
 
             //	check if the request to fetch tracts doesn't fail before setting values to display
@@ -99,7 +99,7 @@ const ProductCreationForm = (props) => {
 
 			if(data){
 				const pkgType = {value: data.pkg.id, label: data.pkg.name};
-				setValue("item_name", data.itemName);
+				setValue("product_name", data.productName);
 				setValue("barcode", data.barcode);
 				setValue("total_qty", data.qty);
 				setValue("qty_per_pkg", data.qtyPerPkg);
@@ -146,7 +146,7 @@ const ProductCreationForm = (props) => {
 	};
 
 	const setItem = (item, formData) => {
-		item.itemName = formData.item_name;
+		item.productName = formData.product_name;
 		item.barcode = formData.barcode;
 		item.qty = formData.total_qty;
 		item.expDate = formData.expDate ? format(formData.expDate, "yyyy-MM-dd") : null;
@@ -305,7 +305,7 @@ const ProductCreationForm = (props) => {
 
 	const reset = () => {
 		resetField('section');
-		resetField('item_name');
+		resetField('product_name');
 		resetField('barcode');
 		resetField('total_qty');
 		resetField('qty_per_pkg');
@@ -343,7 +343,7 @@ const ProductCreationForm = (props) => {
 				/>
 				<ErrorMessage source={errors.section} />
 
-				<Form.Group className="mb-3" controlId="item_name">
+				<Form.Group className="mb-3" controlId="product_name">
 					<Row>
 						<Col sm={"12"} md="4">
 							<Form.Label>Name</Form.Label>
@@ -352,9 +352,9 @@ const ProductCreationForm = (props) => {
 							<Form.Control
 								type="text"
 								placeholder="Item Name"
-								{...register("item_name")}
+								{...register("product_name")}
 							/>
-							<ErrorMessage source={errors.item_name} />
+							<ErrorMessage source={errors.product_name} />
 						</Col>
 					</Row>
 				</Form.Group>

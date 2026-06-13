@@ -54,7 +54,7 @@ const restockSchema = yup.object().shape({
 });
 
 const itemUpdateSchema = yup.object().shape({
-	item_name: yup.string().required("Item name required!"),
+	product_name: yup.string().required("Item name required!"),
 	barcode: yup.string(),
 	restock_level: yup
 		.number()

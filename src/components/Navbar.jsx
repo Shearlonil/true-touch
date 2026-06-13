@@ -7,6 +7,7 @@ import IMAGES from '../assets/images';
 import { useAuth } from '../app-context/auth-context';
 import { useAuthUser } from '../app-context/user-context';
 import ConfirmDialog from './DialogBoxes/ConfirmDialog';
+import { ThreeDotLoading } from './react-loading-indicators/Indicator';
 
 const navLinks = [
     { label: 'Home', path: '/' },
