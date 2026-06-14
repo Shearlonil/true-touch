@@ -199,7 +199,7 @@ const Dashboard = () => {
 		switch (menus.onClickParams.evtName) {
             case 'viewStaff':
                 if(!user.hasAuth(103)){
-                    toast.info('Account not authorized to create staff profile');
+                    toast.info('Account not authorized');
                     return;
                 }
                 navigate('/dashboard/users');
@@ -214,7 +214,7 @@ const Dashboard = () => {
                 navigate('/dashboard/brands');
                 break;
             case 'viewProducts':
-                navigate('/dashboard/staff/membership/plans');
+                navigate('/dashboard/products');
                 break;
             case 'viewCategories':
                 navigate('/dashboard/categories');
@@ -443,7 +443,7 @@ const Dashboard = () => {
                         <span>
                             <h3 className="mb-1">Dashboard</h3>
                             <p className="text-muted-custom mb-0" style={{ fontSize: '0.9rem' }}>
-                                Welcome back! Here's what's happening with your pharmacy.
+                                Welcome back! Here's what's happening with your store.
                             </p>
                         </span>
                         <span>
@@ -588,7 +588,7 @@ const Dashboard = () => {
 					<Modal.Title className='text-primary fw-bold'>Product Details</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-                    <ProductCreationForm handleClose={handleCloseModal} fnSave={fnCreateProduct} networkRequest={networkRequest} />
+                    <ProductCreationForm handleClose={handleCloseModal} fnCreateProduct={fnCreateProduct} networkRequest={networkRequest} />
 				</Modal.Body>
 			</Modal>
         </div>

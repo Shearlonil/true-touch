@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Footer from '../components/Footer.jsx';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Heart, Star, ShoppingCart, Search, SlidersHorizontal } from 'lucide-react';
 
@@ -7,7 +6,7 @@ const categories = ['All', 'Supplements', 'Vitamins', 'Medical Supplies', 'Perso
 
 const formatNaira = (amount) => `₦${amount.toLocaleString()}`;
 
-const Products = () => {
+const OurProducts = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -701,4 +700,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default OurProducts;

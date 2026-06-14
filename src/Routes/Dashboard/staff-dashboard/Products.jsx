@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Row } from "react-bootstrap";
+import { Button, Row, Modal } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
+import { Package } from 'lucide-react';
 import { IoMdAddCircle } from "react-icons/io";
-import { GrView } from "react-icons/gr";
-import { VscRemove } from 'react-icons/vsc';
+import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc';
 import { TbRestore } from "react-icons/tb";
 import { Table, IconButton } from 'rsuite';
 const { Column, HeaderCell, Cell } = Table;
@@ -18,91 +18,103 @@ import PaginationLite from "../../../components/PaginationLite";
 import ConfirmDialog from "../../../components/DialogBoxes/ConfirmDialog";
 import { pageSizeOptions, statusOptions } from "../../../Utils/data";
 import RsuiteTableSkeletonLoader from "../../../components/RsuiteTableSkeletonLoader";
-import useStaffController from "../../../api-controllers/staff-controller-hook";
-import StaffCreationDialog from "../../../components/DialogBoxes/StaffCreationDialog";
-import StaffProfileViewDialog from "../../../components/DialogBoxes/StaffProfileViewDialog";
+import useProductController from "../../../api-controllers/product-controller-hook";
+import { Product } from "../../../Entities/Product";
+import ProductCreationForm from "../../../components/Forms/ProductCreationForm";
 
 const columns = [
     {
-        key: 'fname',
-        label: 'First Name',
+        key: 'productName',
+        label: 'Name',
         fixed: true,
         flexGrow: 2,
         // width: 200
     },
     {
-        key: 'lname',
-        label: 'Last Name',
-        flexGrow: 2,
-        // width: 100
-    },
-    {
-        key: 'phone',
-        label: 'Phone',
+        key: 'salesPrice',
+        label: 'Price',
         flexGrow: 1,
         // width: 100
     },
     {
-        key: 'email',
-        label: 'Email',
+        key: 'barcode',
+        label: 'Barcode',
         flexGrow: 1,
         // width: 100
     },
     {
-        key: 'sex',
-        label: 'Gender',
+        key: 'expDate',
+        label: 'Exp. Date',
         flexGrow: 1,
         // width: 100
     },
     {
-        key: 'creator_fname',
-        label: 'Creator',
+        key: 'tractName',
+        label: 'Department',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'brandName',
+        label: 'Brand',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'categoryName',
+        label: 'Cagegory',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'createdAt',
+        label: 'Created At',
         flexGrow: 1,
         // width: 100
     },
 ];
 
-const ActionCell = ({ rowData, dataKey, changeStatus, onViewStaff, onRestore, ...props }) => {
+const ActionCell = ({ rowData, dataKey, onEdit, changeStatus, onRestore, onSave, ...props }) => {
     return (
         <Cell {...props} style={{ padding: '6px', display: 'flex', gap: '4px', width: '400px' }}>
-            <IconButton icon={<GrView color='green' />} onClick={() => { onViewStaff(rowData); }}  />
+            <IconButton appearance="subtle" icon={rowData.mode === 'EDIT' ? <VscSave /> : <VscEdit />} onClick={() => { onEdit(rowData); }}/>
             <IconButton appearance="subtle" icon={rowData.status == true ? <VscRemove /> : <TbRestore />} onClick={() => { changeStatus(rowData); }}  />
+            <IconButton icon={<VscSave color='green' />} onClick={() => { onSave(rowData); }}  />
         </Cell>
   );
 };
 
-const Staff = () => {
+const Products = () => {
     const controllerRef = useRef(new AbortController());
     
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { paginateFetch, staffSearch, status, register, updateRoles, activeStaffPageInit } = useStaffController();
+    const { paginateFetch, productSearch, status, updateProduct, createProduct, activeProductPageInit } = useProductController();
     const { authUser } = useAuthUser();
     const user = authUser();
 
     const [networkRequest, setNetworkRequest] = useState(false);
-    const [userOptions, setUserOptions] = useState([]);
-    const [userStatus, setUserStatus] = useState(true);
-	const [showConfirmModal, setShowConfirmModal] = useState(false);
-	const [showStaffCreationModal, setShowStaffCreationModal] = useState(false);
-	const [showStaffProfileModal, setShowStaffProfileModal] = useState(false);
-	const [displayMsg, setDisplayMsg] = useState("");
+    const [productOptions, setProductOptions] = useState([]);
+    const [productStatus, setProductStatus] = useState(true);
+    const [displayMsg, setDisplayMsg] = useState("");
     const [confirmDialogEvtName, setConfirmDialogEvtName] = useState(null);
-    const [editedUser, setEditedUser] = useState(null);
+    const [editedProduct, setEditedProduct] = useState(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showInputModal, setShowInputModal] = useState(false);
+    const [showProductCreationModal, setShowProductCreationModal] = useState(false);
         
     //	for pagination
-    const [pageSize, setPageSize] = useState(pageSizeOptions[2].value);
+    const [pageSize, setPageSize] = useState(pageSizeOptions[1].value);
     const [totalItemsCount, setTotalItemsCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     
     //  data returned from DataPagination
-    const [users, setUsers] = useState([]);
+    const [products, setProducts] = useState([]);
     
     useEffect(() => {
-        if(!user || !user.hasAuth(103)){
-            toast.info('Account not authorized to view this page');
-            navigate("/dashboard");
+        if(!user){
+            navigate("/");
             return;
         }
 
@@ -117,14 +129,19 @@ const Staff = () => {
         try {
             controllerRef.current = new AbortController();
             setNetworkRequest(true);
-            const response = await activeStaffPageInit(controllerRef.current.signal, pageSize);
+            const response = await activeProductPageInit(controllerRef.current.signal, pageSize);
 
-            //	check if the request to fetch staff doesn't fail before setting values to display
+            //	check if the request to fetch product doesn't fail before setting values to display
             if(response && response.data){
-                const { count, results } = response.data;
-                setUserOptions(results?.map(staff => ({label: staff.fname + " " + staff.lname, value: staff})));
-                if(results && count){
-                    setUsers(results);
+                const { count, products } = response.data;
+                const productArr = [];
+                setProductOptions(products?.map(product => {
+                    const p = new Product(product);
+                    productArr.push(p);
+                    return { label: p.productName, value: p };
+                }));
+                if(products && count){
+                    setProducts([...productArr]);
                     setTotalItemsCount(count);
                 }
             }
@@ -140,19 +157,20 @@ const Staff = () => {
         }
     };
 
-    const asyncUserSearch = async (inputValue, callback) => {
-        if(!user.hasAuth(104)){
-            toast.info('Account not authorized to search');
-            return;
-        }
+    const asyncProductSearch = async (inputValue, callback) => {
         /*  refs: https://stackoverflow.com/questions/65963103/how-can-i-setup-react-select-to-work-correctly-with-server-side-data-by-using  */
         try {
             setNetworkRequest(true);
             resetAbortController();
-            const response = await staffSearch(controllerRef.current.signal, {inputValue, userStatus});
-            const results = response.data.map(staff => ({label: staff.fname + " " + staff.lname, value: staff}));
-            setUserOptions(results);
-            setUsers(response.data);
+            const response = await productSearch(controllerRef.current.signal, {inputValue, productStatus});
+            const productArr = [];
+            const results = response.data.map(product => {
+                const p = new Product(product);
+                productArr.push(p);
+                return { label: p.productName, value: p };
+            });
+            setProductOptions(results);
+            setProducts([...productArr]);
             setTotalItemsCount(0);
             setNetworkRequest(false);
             callback(results);
@@ -166,26 +184,27 @@ const Staff = () => {
         }
     };
 
-    const handleStaffChange = (val) => {
+    const handleProductChange = (val) => {
         setTotalItemsCount(0);
-        setUsers( val ? [val.value] : [] );
+        setProducts( val ? [val.value] : [] );
     };
 
     const handleStatusChange = async (val) => {
-        if(!user.hasAuth(104) || !user.hasAuth(103)){
-            toast.info('Account not authorized');
-            return;
-        }
         try {
             setNetworkRequest(true);
             resetAbortController();
-            const response = await paginateFetch(controllerRef.current.signal, {page: 1, pageSize, userStatus: val.value});
-            const { count, results } = response.data;
-            setUserOptions(results.map(staff => ({label: staff.fname + " " + staff.lname, value: staff})));
-            setUsers(results);
+            const response = await paginateFetch(controllerRef.current.signal, {page: 1, pageSize, productStatus: val.value});
+            const { count, products } = response.data;
+            const productArr = [];
+            setProductOptions(products?.map(product => {
+                const p = new Product(product);
+                productArr.push(p);
+                return { label: p.productName, value: p };
+            }));
+            setProducts([...productArr]);
             setCurrentPage(1);
             setTotalItemsCount(count);
-            setUserStatus(val.value);
+            setProductStatus(val.value);
             setNetworkRequest(false);
         } catch (error) {
             if (error.name === 'AbortError' || error.name === 'CanceledError') {
@@ -198,18 +217,19 @@ const Staff = () => {
     };
 
     const handlePageSizeChanged = async (val) => {
-        if(!user.hasAuth(104) || !user.hasAuth(103)){
-            toast.info('Account not authorized');
-            return;
-        }
         // whenever page size changes, make a fresh request using necessary params
         try {
             setNetworkRequest(true);
             resetAbortController();
-            const response = await paginateFetch(controllerRef.current.signal, {page: 1, pageSize: val.value, userStatus});
-            const { count, results } = response.data;
-            setUserOptions(results.map(staff => ({label: staff.fname + " " + staff.lname, value: staff})));
-            setUsers(results);
+            const response = await paginateFetch(controllerRef.current.signal, {page: 1, pageSize: val.value, productStatus});
+            const { count, products } = response.data;
+            const productArr = [];
+            setProductOptions(products?.map(product => {
+                const p = new Product(product);
+                productArr.push(p);
+                return { label: p.productName, value: p };
+            }));
+            setProducts([...productArr]);
             setCurrentPage(1);
             setTotalItemsCount(count);
             setPageSize(val.value);
@@ -225,17 +245,18 @@ const Staff = () => {
     };
 
     const setPageChanged = async (pageNumber) => {
-        if(!user.hasAuth(104) || !user.hasAuth(103)){
-            toast.info('Account not authorized');
-            return;
-        }
         try {
             setNetworkRequest(true);
             resetAbortController();
-            const response = await paginateFetch(controllerRef.current.signal, {page: pageNumber, pageSize, userStatus});
-            const { count, results } = response.data;
-            setUserOptions(results.map(staff => ({label: staff.fname + " " + staff.lname, value: staff})));
-            setUsers(results);
+            const response = await paginateFetch(controllerRef.current.signal, {page: pageNumber, pageSize, productStatus});
+            const { count, products } = response.data;
+            const productArr = [];
+            setProductOptions(products?.map(product => {
+                const p = new Product(product);
+                productArr.push(p);
+                return { label: p.productName, value: p };
+            }));
+            setProducts([...productArr]);
             setCurrentPage(pageNumber);
             setTotalItemsCount(count);
             setNetworkRequest(false);
@@ -249,18 +270,14 @@ const Staff = () => {
         }
     };
 
-	const delUser = async () => {
-        if(!user.hasAuth(100)){
-            toast.info('Account not authorized');
-            return;
-        }
+    const restoreProduct = async () => {
         try {
             setNetworkRequest(true);
             resetAbortController();
-            await status(controllerRef.current.signal, {id: editedUser.id, status: false});
-            setUsers(users.filter(staff => editedUser.id !== staff.id));
-            setTotalItemsCount(users.length - 1);
-            setEditedUser(null);
+            await status(controllerRef.current.signal, { id: editedProduct.id, status: true });
+            setProducts(products.filter(product => editedProduct.id !== product.id));
+            setTotalItemsCount(products.length - 1);
+            setEditedProduct(null);
             setNetworkRequest(false);
         } catch (error) {
             if (error.name === 'AbortError' || error.name === 'CanceledError') {
@@ -271,94 +288,100 @@ const Staff = () => {
             toast.error(handleErrMsg(error).msg);
         }
     };
-
-	const restoreUser = async () => {
-        if(!user.hasAuth(100)){
-            toast.info('Account not authorized');
-            return;
-        }
+    
+    const delProduct = async () => {
         try {
             setNetworkRequest(true);
             resetAbortController();
-            await status(controllerRef.current.signal, {id: editedUser.id, status: true});
-            setUsers(users.filter(staff => editedUser.id !== staff.id));
-            setTotalItemsCount(users.length - 1);
-            setEditedUser(null);
+            await status(controllerRef.current.signal, {id: editedProduct.id, status: false});
+            setProducts(products.filter(product => editedProduct.id !== product.id));
+            setTotalItemsCount(products.length - 1);
+            setEditedProduct(null);
             setNetworkRequest(false);
         } catch (error) {
-            if (error.name === 'AbortError' || error.name === 'CanceledError') {
-                // Request was intentionally aborted, handle silently
+            setNetworkRequest(false);
+            if (error.name === 'AbortError' || error.name === 'CanceledError' || (error.response?.status === 500 && error.response?.data.message === "Invalid Token received!")) {
+                // Request was intentionally aborted or Invalid Bearer Token received which requires refresh, handle silently
                 return;
             }
-            setNetworkRequest(false);
+            // display error message
             toast.error(handleErrMsg(error).msg);
         }
     };
 
-    const handleChangeStatus = staff => {
-        if(!user.hasAuth(100)){
+    const handleChangeStatus = product => {
+        if(!user.hasAuth(201)){
             toast.info('Account not authorized');
             return;
         }
-        if(staff.status){
+        if(product.status){
             setConfirmDialogEvtName('remove');
-            setDisplayMsg(`Delete ${staff.fname + " " + staff.lname} from active list?`);
+            setDisplayMsg(`Delete ${product.productName} from active list?`);
             setShowConfirmModal(true);
-            setEditedUser(staff);
+            setEditedProduct(product);
         }else {
             setConfirmDialogEvtName('restore');
-            setDisplayMsg(`Restore ${staff.fname + " " + staff.lname} from list of inactive users?`);
+            setDisplayMsg(`Restore ${product.productName} from list of inactive department?`);
             setShowConfirmModal(true);
-            setEditedUser(staff);
+            setEditedProduct(product);
         }
     };
+	
+	const fnCreateProduct = async (item) => {
+		try {
+			setNetworkRequest(true);
+            resetAbortController();
+            const data = {
+                product_name: item.productName,
+                barcode: item.barcode,
+                expDate: item.expDate,
+                tract: item.tract.id,
+                sales_price: item.unitSalesPrice,
+                restock_level: 1,
+                brand: item.brand?.id,
+                category: item.category?.id,
+            }
+			const response = await createProduct(controllerRef.current.signal, data);
+            const p = new Product(response.data);
+            setProducts([...products, p]);
+            toast.info('Product creation successful');
+			setNetworkRequest(false);
+		} catch (error) {
+            setNetworkRequest(false);
+            if (error.name === 'AbortError' || error.name === 'CanceledError' || (error.response?.status === 500 && error.response?.data.message === "Invalid Token received!")) {
+                // Request was intentionally aborted or Invalid Bearer Token received which requires refresh, handle silently
+                return;
+            }
+            // display error message
+            toast.error(handleErrMsg(error).msg);
+            // throw error to prevent ProductScreationForm from clearing fields
+            throw error;
+		}
+	}
 
-    const handleViewStaff = staff => {
-        if(!user.hasAuth(105)){
-            toast.info('Account not authorized to view staff profile');
+    const fnUpdateProduct = async (item) => {
+        if(!user.hasAuth(202)){
+            toast.info('Account not authorized');
             return;
         }
-        setEditedUser(staff);
-        setDisplayMsg('Profile View');
-        setShowStaffProfileModal(true);
-    };
-
-    const handleConfirmStaffCreation = staff => {
-        setEditedUser(staff);
-        setDisplayMsg('Create new account?');
-        setConfirmDialogEvtName('create');
-        setShowConfirmModal(true);
-    };
-  
-    const handleCreateStaff = async () => {
         try {
             setNetworkRequest(true);
             resetAbortController();
-            const authArr = editedUser.authorities?.map(auth => auth.value.code);
-            const dto = {
-                fname: editedUser.fname,
-                lname: editedUser.lname,
-                phone: editedUser.phone,
-                email: editedUser.email,
-                sex: editedUser.sex.value,
-                authorities: authArr ? authArr : []
+            const data = {
+                id: item.id,
+                product_name: item.productName,
+                barcode: item.barcode,
+                expDate: item.expDate,
+                tract: item.tract.id,
+                sales_price: item.unitSalesPrice,
+                restock_level: 1,
+                brand: item.brand?.id,
+                category: item.category?.id,
             }
-            const response = await register(controllerRef.current.signal, dto);
-            const user = {
-                id: response.data.id,
-                fname: editedUser.fname,
-                lname: editedUser.lname,
-                phone: editedUser.phone,
-                email: editedUser.email,
-                sex: editedUser.sex.value,
-                status: 1,
-                createdAt: new Date(),
-            }
-            setUsers([...users, user]);
-            setTotalItemsCount(users.length - 1);
-            setEditedUser(null);
+            await updateProduct(controllerRef.current.signal, data);
+            setShowProductCreationModal(false);
+            setEditedProduct(null);
             setNetworkRequest(false);
-            handleCloseModal();
         } catch (error) {
             if (error.name === 'AbortError' || error.name === 'CanceledError') {
                 // Request was intentionally aborted, handle silently
@@ -367,60 +390,43 @@ const Staff = () => {
             setNetworkRequest(false);
             toast.error(handleErrMsg(error).msg);
         }
-    };
-
-    const handleAuthUpdate = async (auths) => {
-        if(!user.hasAuth(102)){
-            toast.info('Account not authorized to update staff roles');
-            return;
-        }
-        try {
-            setNetworkRequest(true);
-            resetAbortController();
-
-            const authArr = auths.map(auth => ( {id: auth.id, code: auth.code} ));
-
-            await updateRoles(controllerRef.current.signal, {id: editedUser.id, authorities: authArr});
-            
-            setEditedUser(null);
-            setNetworkRequest(false);
-            handleCloseModal();
-        } catch (error) {
-            if (error.name === 'AbortError' || error.name === 'CanceledError') {
-                // Request was intentionally aborted, handle silently
-                return;
-            }
-            setNetworkRequest(false);
-            toast.error(handleErrMsg(error).msg);
-        }
-    };
-
-    const handleAddStaff = () => {
-        if(!user.hasAuth(101)){
-            toast.info('Account not authorized to create staff profile');
-            return;
-        }
-        setDisplayMsg('Add New Staff');
-        setShowStaffCreationModal(true);
     }
 
-	const handleCloseModal = () => {
+    const handleEdit = product => {
+        setEditedProduct(product);
+        setShowProductCreationModal(true);
+    };
+  
+    const handleSave = async (product) => {
+        setConfirmDialogEvtName('save');
+        setDisplayMsg(`Save changes made to ${product.name}?`);
+        setShowConfirmModal(true);
+        setEditedProduct(product);
+    };
+
+    const handleAddProduct = () => {
+        if(!user.hasAuth(200)){
+            toast.info('Account not authorized');
+            return;
+        }
+        setDisplayMsg('Add New Department');
+        setShowProductCreationModal(true);
+    }
+
+    const handleCloseModal = () => {
         setShowConfirmModal(false);
-        setShowStaffCreationModal(false);
-        setShowStaffProfileModal(false);
+        setShowInputModal(false);
+        setShowProductCreationModal(false);
     };
   
     const handleConfirm = async () => {
         setShowConfirmModal(false);
         switch (confirmDialogEvtName) {
             case "remove":
-                delUser();
+                delProduct();
                 break;
             case "restore":
-                restoreUser();
-                break;
-            case "create":
-                handleCreateStaff();
+                restoreProduct();
                 break;
         }
     };
@@ -444,7 +450,7 @@ const Staff = () => {
                     </div>
                 </div>
                 <div className=" col-12 col-md-2 mt-4">
-                    <Button variant="success fw-bold d-flex gap-3 align-items-center justify-content-center" className="w-100" onClick={handleAddStaff}>
+                    <Button variant="success fw-bold d-flex gap-3 align-items-center justify-content-center" className="w-100" onClick={handleAddProduct}>
                         <IoMdAddCircle size='32px' /> Add
                     </Button>
                 </div>
@@ -452,12 +458,12 @@ const Staff = () => {
             {/* NOTE: setting z-index of this row because of rsuite table which conflicts the drop down menu of react-select */}
             <Row className="card shadow border-0 rounded-3 z-3">
                 <div className="card-body row ms-0 me-0">
-                    <div className="d-flex gap-3 align-items-center col-12 col-md-4 mb-3">
-                        <img src={IMAGES.staff_management} alt ="Avatar" className="rounded-circle" width={50} height={50} />
-                        <span className="text-danger fw-bold h2">Staff Members</span>
+                    <div className="d-flex gap-2 align-items-center col-12 col-md-5 mb-3">
+                        <Package />
+                        <span className="text-danger fw-bold h2 text-truncate">Product</span>
                     </div>
 
-                    <div className="d-flex flex-column gap-2 align-items-center col-12 col-md-4 mb-3">
+                    <div className="d-flex flex-column gap-2 align-items-center col-12 col-md-3 mb-3">
                         <span className="align-self-start fw-bold">Search</span>
                         <AsyncSelect
                             className="text-dark w-100"
@@ -465,10 +471,10 @@ const Staff = () => {
                             // getOptionLabel={getOptionLabel}
                             getOptionValue={(option) => option}
                             // defaultValue={initialObject}
-                            defaultOptions={userOptions}
+                            defaultOptions={productOptions}
                             cacheOptions
-                            loadOptions={asyncUserSearch}
-                            onChange={(val) => handleStaffChange(val) }
+                            loadOptions={asyncProductSearch}
+                            onChange={(val) => handleProductChange(val) }
                         />
                     </div>
 
@@ -500,23 +506,22 @@ const Staff = () => {
                     </div>
                 </div>
             </Row>
-
-            <Table loading={networkRequest} rowKey="id" data={users} affixHeader affixHorizontalScrollbar 
+            
+            <Table loading={networkRequest} rowKey="id" data={products} affixHeader affixHorizontalScrollbar
                 renderLoading={() => <RsuiteTableSkeletonLoader withPlaceholder={true} rows={10} cols={5} />} 
-                autoHeight={true} hover={true}>
-                    
+                autoHeight hover={true}>
                 {columns.map((column, idx) => {
                     const { key, label, ...rest } = column;
                     return (
                         <Column {...rest} key={key} fullText>
-                            <HeaderCell className='fw-bold text-success'>{label}</HeaderCell>
+                            <HeaderCell className='fw-bold text-success fs-6'>{label}</HeaderCell>
                             <Cell dataKey={key} style={{ padding: 6 }} />
                         </Column>
                     );
                 })}
                 <Column width={150} >
-                    <HeaderCell className='fw-bold text-success'>Actions...</HeaderCell>
-                    <ActionCell changeStatus={handleChangeStatus} onViewStaff={handleViewStaff} />
+                    <HeaderCell className='fw-bold text-success fs-6'>Actions...</HeaderCell>
+                    <ActionCell changeStatus={handleChangeStatus} onEdit={handleEdit} onSave={handleSave} />
                 </Column>
             </Table>
             <Row className="mt-3">
@@ -527,30 +532,22 @@ const Staff = () => {
                     pageNumber={currentPage}
                 />
             </Row>
-			<ConfirmDialog
-				show={showConfirmModal}
-				handleClose={handleCloseModal}
-				handleConfirm={handleConfirm}
-				message={displayMsg}
-			/>
-			<StaffCreationDialog
-				show={showStaffCreationModal}
-				handleClose={handleCloseModal}
-				handleConfirm={handleConfirmStaffCreation}
-				message={displayMsg}
-                networkRequest={networkRequest}
-                setNetworkREquest={setNetworkRequest}
-			/>
-			<StaffProfileViewDialog
-				show={showStaffProfileModal}
-				handleClose={handleCloseModal}
-				handleConfirm={handleAuthUpdate}
-				message={displayMsg}
-                networkRequest={networkRequest}
-                staff={editedUser}
-			/>
+            <ConfirmDialog
+                show={showConfirmModal}
+                handleClose={handleCloseModal}
+                handleConfirm={handleConfirm}
+                message={displayMsg}
+            />
+			<Modal backdrop='static' show={showProductCreationModal} onHide={handleCloseModal}>
+				<Modal.Header closeButton>
+					<Modal.Title className='text-primary fw-bold'>Product Details</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+                    <ProductCreationForm handleClose={handleCloseModal} fnCreateProduct={fnCreateProduct} fnUpdateProduct={fnUpdateProduct} networkRequest={networkRequest} data={editedProduct} />
+				</Modal.Body>
+			</Modal>
         </section>
     )
 }
 
-export default Staff;
+export default Products;

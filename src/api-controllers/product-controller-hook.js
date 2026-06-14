@@ -12,13 +12,8 @@ const useProductController = () => {
         return await xhrAxios.put(`/products/status`, data, {signal});
     }
     
-    const renameProduct = async (signal, data) => {
-        return await xhrAxios.put(`/products/update`, null, {
-            params: {
-                name: data.name,
-                id: data.id
-            }
-        }, {signal});
+    const updateProduct = async (signal, data) => {
+        return await xhrAxios.put(`/products/update`, data, {signal});
     }
     
     const activeProductPageInit = async (signal, pageSize) => {
@@ -28,7 +23,7 @@ const useProductController = () => {
     const paginateFetch = async (signal, data) => {
         return await xhrAxios.get(`/products/search/page/${data.page}`, {
             params: {
-                pageSize: data.pageSize, status: data.catStatus, page: data.page
+                pageSize: data.pageSize, status: data.productStatus, page: data.page
             }
         }, {signal});
     }
@@ -36,7 +31,7 @@ const useProductController = () => {
     const productSearch = async (signal, data) => {
         return await xhrAxios.get(`/products/query`, {
             params: {
-                str: data.inputValue, status: data.catStatus
+                str: data.inputValue, status: data.productStatus
             }
         }, {signal});
     }
@@ -44,7 +39,7 @@ const useProductController = () => {
     return {
         createProduct,
         status,
-        renameProduct,
+        updateProduct,
         activeProductPageInit,
         paginateFetch,
         productSearch,

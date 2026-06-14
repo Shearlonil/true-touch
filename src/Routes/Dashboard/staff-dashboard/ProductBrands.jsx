@@ -357,7 +357,7 @@ const ProductBrand = () => {
             toast.info('Account not authorized');
             return;
         }
-        setDisplayMsg('Add New Department');
+        setDisplayMsg('Add New Product Brand');
         setShowInputModal(true);
     }
 
@@ -486,7 +486,7 @@ const ProductBrand = () => {
                     if(idx < 1){
                         return (
                             <Column {...rest} key={key}>
-                                <HeaderCell>{label}</HeaderCell>
+                                <HeaderCell className='fw-bold text-success fs-6'>{label}</HeaderCell>
                                 <EditableCell
                                     fullText
                                     dataKey={key}
@@ -500,13 +500,13 @@ const ProductBrand = () => {
                     }
                     return (
                         <Column {...rest} key={key} fullText>
-                            <HeaderCell>{label}</HeaderCell>
+                            <HeaderCell className='fw-bold text-success fs-6'>{label}</HeaderCell>
                             <Cell dataKey={key} style={{ padding: 6 }} />
                         </Column>
                     );
                 })}
                 <Column width={150} >
-                    <HeaderCell>Actions...</HeaderCell>
+                    <HeaderCell className='fw-bold text-success fs-6'>Actions...</HeaderCell>
                     <ActionCell changeStatus={handleChangeStatus} onEdit={handleEdit} onSave={handleSave} />
                 </Column>
             </Table>

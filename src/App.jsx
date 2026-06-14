@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import Index from './Routes/Index.jsx';
 import About from './Routes/About.jsx';
 import Contact from './Routes/Contact.jsx';
-import Products from './Routes/Products.jsx';
+import OurProducts from './Routes/OurProducts.jsx';
 import NotFound from './Routes/NotFound.jsx';
 import ProtectedRoute from './Routes/ProtectedRoute.jsx';
 import Dashboard from './Routes/Dashboard/MainDashboard.jsx';
@@ -16,12 +16,13 @@ import Profile from './Routes/Dashboard/MyProfilePage/MainProfile.jsx';
 import Tract from './Routes/Dashboard/staff-dashboard/Tracts.jsx';
 import ProductBrand from './Routes/Dashboard/staff-dashboard/ProductBrands.jsx';
 import ProductCategory from './Routes/Dashboard/staff-dashboard/ProductCategory.jsx';
+import Products from './Routes/Dashboard/staff-dashboard/Products.jsx';
 
 const App = () => (
     <>
         <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/products" element={<Products />} />
+            <Route path="/products" element={<OurProducts />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<AuthPage />} />
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute />}>
                 <Route index path="users" element={<Staff />} />
                 <Route index path="departments" element={<Tract />} />
+                <Route index path="products" element={<Products />} />
                 <Route index path="brands" element={<ProductBrand />} />
                 <Route index path="categories" element={<ProductCategory />} />
                 <Route index path="profile" element={<Profile />} />

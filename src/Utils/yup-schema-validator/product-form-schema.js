@@ -14,7 +14,7 @@ const productCreationSchema = yup.object().shape({
 		.required("Sales Price is required"),
 	brand: yup.object().typeError("Select a valid brand").optional().nullable(),
 	category: yup.object().typeError("Select a valid category").optional().nullable(),
-	tract: yup.object().typeError("Select a valid department"),
+	tract: yup.object().typeError("Select a valid department").required("Please select product department"),
 	// restock_level: yup
 	// 	.number()
 	// 	.positive("Restock level must be positive")

@@ -18,11 +18,11 @@ import useGenericController from "../../api-controllers/generic-controller-hook"
 //	ref:	https://help.nextar.com/tutorial/stock-control
 const ProductCreationForm = (props) => {
 	const controllerRef = useRef(new AbortController());
-	const { data, fnSave, networkRequest }  = props;
+	const { data, fnCreateProduct, fnUpdateProduct, networkRequest }  = props;
 	
 	const navigate = useNavigate();
 
-	const { performGetRequests, get } = useGenericController();
+	const { performGetRequests } = useGenericController();
 	// for tracts
 	const [tractOptions, setTractOptions] = useState([]);
 	const [tractsLoading, setTractsLoading] = useState(true);
@@ -78,28 +78,28 @@ const ProductCreationForm = (props) => {
             //	check if the request to fetch brand doesn't fail before setting values to display
             if(brandRequest){
                 setBrandsLoading(false);
-				setBrandOptions(brandRequest.data.map( brand => ({label: brand.name, value: brand})));
+				setBrandOptions(brandRequest.data.map( brand => ({label: brand.name, value: brand}) ));
             }
 
             //	check if the request to fetch categories doesn't fail before setting values to display
             if(categoryRequest){
 				setCatsLoading(false);
-                setCatOptions(categoryRequest.data.map( cat => ({label: cat.name, value: cat})));
+                setCatOptions(categoryRequest.data.map( cat => ({label: cat.name, value: cat}) ));
             }
 
             //	check if the request to fetch tracts doesn't fail before setting values to display
             if(tractRequest){
 				setTractsLoading(false);
-                setTractOptions(tractRequest.data.map( tract => ({label: tract.name, value: tract})));
+                setTractOptions(tractRequest.data.map( tract => ({label: tract.name, value: tract}) ));
             }
 
 			if(data){
 				setValue("product_name", data.productName);
 				setValue("barcode", data.barcode);
-				setValue("sales_price", numeral(data.unitSalesPrice).value());
-				setValue("tract", {value: data.tract, label: data.tract.name});
-				setValue("brand", {value: data.brand, label: data.brand.name});
-				setValue("category", {value: data.category, label: data.category.name});
+				setValue("sales_price", numeral(data.salesPrice).value());
+				setValue("tract", {value: data.tract, label: data.tractName});
+				setValue("brand", data.brand ? {value: data.brand, label: data.brandName} : null);
+				setValue("category", data.category ? {value: data.category, label: data.categoryName} : null);
 				setValue("expDate", data.expDate);
 			}
 		} catch (error) {
@@ -117,12 +117,12 @@ const ProductCreationForm = (props) => {
 			if(props.data?.id){
 				//	if data has id, then update mode
 				setItem(props.data, formData);
-				await fnSave(props.data);
+				await fnUpdateProduct(props.data);
 			}else {
 				// 	else, create new item
 				const item = {};
 				setItem(item, formData);
-				await fnSave(item);
+				await fnCreateProduct(item);
 				//	only reset when new item is added and not edited
 				reset();
 			}
@@ -140,24 +140,34 @@ const ProductCreationForm = (props) => {
 		if(formData.brand){
 			const brand = {
 				id: formData.brand.value.id,
-				brandName: formData.brand.value.name,
+				name: formData.brand.value.name,
 			};
 			item.brand = brand;
+			item.brandName = brand.name;
+		}else {
+			item.brand = null;
+			item.brandName = null
 		}
+
 
 		if(formData.category){
 			const category = {
 				id: formData.category.value.id,
-				catName: formData.category.value.name,
+				name: formData.category.value.name,
 			};
 			item.category = category;
+			item.categoryName = category.name;
+		}else {
+			item.category = null;
+			item.categoryName = null;
 		}
 
 		const tract = {
 			id: formData.tract.value.id,
-			tractName: formData.tract.value.name,
+			name: formData.tract.value.name,
 		};
 		item.tract = tract;
+		item.tractName = tract.name;
 	}
 
 	const reset = () => {
@@ -173,22 +183,24 @@ const ProductCreationForm = (props) => {
 	return (
 		<>
 			<Form className="d-flex flex-column gap-2">
-				<Controller
-					name="tract"
-					control={control}
-					render={({ field: { onChange, value } }) => (
-						<Select
-							required
-							placeholder="Choose Department..."
-							className="text-dark col-12 mb-3"
-							options={tractOptions}
-							isLoading={tractsLoading}
-							onChange={(val) => onChange(val)}
-							value={value}
-						/>
-					)}
-				/>
-				<ErrorMessage source={errors.tract} />
+				<div className="d-flex flex-column mb-3 gap-1">
+					<Controller
+						name="tract"
+						control={control}
+						render={({ field: { onChange, value } }) => (
+							<Select
+								required
+								placeholder="Choose Department..."
+								className="text-dark col-12"
+								options={tractOptions}
+								isLoading={tractsLoading}
+								onChange={(val) => onChange(val)}
+								value={value}
+							/>
+						)}
+					/>
+					<ErrorMessage source={errors.tract} />
+				</div>
 
 				<Form.Group className="mb-3" controlId="product_name">
 					<Row>
