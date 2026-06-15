@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar as BsNavbar, Nav, Container } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import { Phone, Search, Heart, ShoppingCart, Menu, X, Clock } from 'lucide-react';
 
 import IMAGES from '../assets/images';
@@ -8,6 +9,7 @@ import { useAuth } from '../app-context/auth-context';
 import { useAuthUser } from '../app-context/user-context';
 import ConfirmDialog from './DialogBoxes/ConfirmDialog';
 import { ThreeDotLoading } from './react-loading-indicators/Indicator';
+import handleErrMsg from '../Utils/error-handler';
 
 const navLinks = [
     { label: 'Home', path: '/' },

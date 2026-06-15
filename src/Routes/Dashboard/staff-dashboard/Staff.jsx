@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import {
+    LayoutDashboard, Package, ShoppingCart, Users, TrendingUp, DollarSign,
+    UserPen, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
+    Clock, Eye, Search, Menu, X, LayoutPanelTop
+} from 'lucide-react';
+import { SiBrandfetch } from "react-icons/si";
+import { MdOutlineCategory } from "react-icons/md";
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { IoMdAddCircle } from "react-icons/io";
@@ -21,6 +28,7 @@ import RsuiteTableSkeletonLoader from "../../../components/RsuiteTableSkeletonLo
 import useStaffController from "../../../api-controllers/staff-controller-hook";
 import StaffCreationDialog from "../../../components/DialogBoxes/StaffCreationDialog";
 import StaffProfileViewDialog from "../../../components/DialogBoxes/StaffProfileViewDialog";
+import OffcanvasMenu from '../../../components/OffCanvasSideNav';
 
 const columns = [
     {
@@ -60,6 +68,16 @@ const columns = [
         flexGrow: 1,
         // width: 100
     },
+];
+
+const offCanvasMenu = [
+    // { icon: LayoutDashboard, label: 'Dashboard', onClickParams: {evtName: 'dashboard'} },
+    // { icon: ShoppingCart, label: 'Orders', onClickParams: {evtName: 'orders'} },
+    { icon: Package, label: 'Products', onClickParams: {evtName: 'viewProducts'},},
+    { icon: SiBrandfetch, label: "Product Brands", onClickParams: {evtName: 'viewBrands'}, },
+    { icon: MdOutlineCategory, label: "Product Categories", onClickParams: {evtName: 'viewCategories'}, },
+    { icon: LayoutPanelTop, label: "Product Departments", onClickParams: {evtName: 'viewDepartments'}, },
+    { icon: UserPen, label: 'Profile', onClickParams: {evtName: 'myProfile'} },
 ];
 
 const ActionCell = ({ rowData, dataKey, changeStatus, onViewStaff, onRestore, ...props }) => {
@@ -223,6 +241,26 @@ const Staff = () => {
             toast.error(handleErrMsg(error).msg);
         }
     };
+
+	const handleOffCanvasMenuItemClick = async (menus, e) => {
+		switch (menus.onClickParams.evtName) {
+            case 'viewDepartments':
+                navigate('/dashboard/departments');
+                break;
+            case 'viewBrands':
+                navigate('/dashboard/brands');
+                break;
+            case 'viewProducts':
+                navigate('/dashboard/products');
+                break;
+            case 'viewCategories':
+                navigate('/dashboard/categories');
+                break;
+            case 'myProfile':
+                navigate('/dashboard/profile');
+                break;
+        }
+	}
 
     const setPageChanged = async (pageNumber) => {
         if(!user.hasAuth(104) || !user.hasAuth(103)){
@@ -435,6 +473,7 @@ const Staff = () => {
 
     return (
         <section className='container d-flex flex-column gap-4' style={{minHeight: '60vh'}}>
+            <OffcanvasMenu menuItems={offCanvasMenu} menuItemClick={handleOffCanvasMenuItemClick} />
             <Row className='d-flex align-items-center'>
                 <div className="d-flex flex-wrap gap-4 align-items-center col-12 col-md-10 mt-4" >
                     <img src={IMAGES.svg_user} alt ="Avatar" className="rounded-circle" width={100} height={100} />

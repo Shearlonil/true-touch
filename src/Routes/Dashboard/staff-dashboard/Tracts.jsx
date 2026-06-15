@@ -5,6 +5,9 @@ import { toast } from "react-toastify";
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { IoMdAddCircle } from "react-icons/io";
+import { Package, Users, UserPen } from 'lucide-react';
+import { SiBrandfetch } from "react-icons/si";
+import { MdOutlineCategory } from "react-icons/md";
 import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc';
 import { TbRestore } from "react-icons/tb";
 import { Table, IconButton, Input, NumberInput, DatePicker } from 'rsuite';
@@ -20,6 +23,15 @@ import RsuiteTableSkeletonLoader from "../../../components/RsuiteTableSkeletonLo
 import useTractController from "../../../api-controllers/tract-controller-hook";
 import InputDialog from "../../../components/DialogBoxes/InputDialog";
 import DropDownDialog from "../../../components/DialogBoxes/DropDownDialog";
+import OffcanvasMenu from '../../../components/OffCanvasSideNav';
+
+const offCanvasMenu = [
+    { icon: Users, label: 'Staff Members', onClickParams: {evtName: 'viewStaff'},},
+    { icon: Package, label: "Products", onClickParams: {evtName: 'viewProducts'}, },
+    { icon: MdOutlineCategory, label: "Product Categories", onClickParams: {evtName: 'viewCategories'}, },
+    { icon: SiBrandfetch, label: "Product Brands", onClickParams: {evtName: 'viewBrands'}, },
+    { icon: UserPen, label: 'Profile', onClickParams: {evtName: 'myProfile'} },
+];
 
 const columns = [
     {
@@ -408,6 +420,30 @@ const Tract = () => {
         }
 	};
 
+	const handleOffCanvasMenuItemClick = async (menus, e) => {
+		switch (menus.onClickParams.evtName) {
+            case 'viewStaff':
+                if(!user.hasAuth(103)){
+                    toast.info('Account not authorized');
+                    return;
+                }
+                navigate('/dashboard/users');
+                break;
+            case 'viewCategories':
+                navigate('/dashboard/categories');
+                break;
+            case 'viewBrands':
+                navigate('/dashboard/brands');
+                break;
+            case 'viewProducts':
+                navigate('/dashboard/products');
+                break;
+            case 'myProfile':
+                navigate('/dashboard/profile');
+                break;
+        }
+	}
+
     const resetAbortController = () => {
         // Cancel previous request if it exists
         if (controllerRef.current) {
@@ -418,6 +454,7 @@ const Tract = () => {
 
     return (
         <section className='container d-flex flex-column gap-4' style={{minHeight: '60vh'}}>
+            <OffcanvasMenu menuItems={offCanvasMenu} menuItemClick={handleOffCanvasMenuItemClick} />
             <Row className='d-flex align-items-center'>
                 <div className="d-flex flex-wrap gap-4 align-items-center col-12 col-md-10 mt-4" >
                     <img src={IMAGES.svg_user} alt ="Avatar" className="rounded-circle" width={100} height={100} />

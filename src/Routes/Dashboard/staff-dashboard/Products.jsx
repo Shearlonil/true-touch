@@ -4,12 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
-import { Package } from 'lucide-react';
 import { IoMdAddCircle } from "react-icons/io";
 import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc';
 import { TbRestore } from "react-icons/tb";
 import { Table, IconButton } from 'rsuite';
 const { Column, HeaderCell, Cell } = Table;
+import { Package, Users, UserPen, LayoutPanelTop } from 'lucide-react';
+import { SiBrandfetch } from "react-icons/si";
+import { MdOutlineCategory } from "react-icons/md";
 
 import { useAuthUser } from "../../../app-context/user-context";
 import handleErrMsg from "../../../Utils/error-handler";
@@ -21,6 +23,7 @@ import RsuiteTableSkeletonLoader from "../../../components/RsuiteTableSkeletonLo
 import useProductController from "../../../api-controllers/product-controller-hook";
 import { Product } from "../../../Entities/Product";
 import ProductCreationForm from "../../../components/Forms/ProductCreationForm";
+import OffcanvasMenu from '../../../components/OffCanvasSideNav';
 
 const columns = [
     {
@@ -72,6 +75,16 @@ const columns = [
         flexGrow: 1,
         // width: 100
     },
+];
+
+const offCanvasMenu = [
+    // { icon: LayoutDashboard, label: 'Dashboard', onClickParams: {evtName: 'dashboard'} },
+    { icon: Users, label: 'Staff Members', onClickParams: {evtName: 'viewStaff'},},
+    // { icon: ShoppingCart, label: 'Orders', onClickParams: {evtName: 'orders'} },
+    { icon: SiBrandfetch, label: "Product Brands", onClickParams: {evtName: 'viewBrands'}, },
+    { icon: MdOutlineCategory, label: "Product Categories", onClickParams: {evtName: 'viewCategories'}, },
+    { icon: LayoutPanelTop, label: "Product Departments", onClickParams: {evtName: 'viewDepartments'}, },
+    { icon: UserPen, label: 'Profile', onClickParams: {evtName: 'myProfile'} },
 ];
 
 const ActionCell = ({ rowData, dataKey, onEdit, changeStatus, onRestore, onSave, ...props }) => {
@@ -243,6 +256,30 @@ const Products = () => {
             toast.error(handleErrMsg(error).msg);
         }
     };
+
+	const handleOffCanvasMenuItemClick = async (menus, e) => {
+		switch (menus.onClickParams.evtName) {
+            case 'viewStaff':
+                if(!user.hasAuth(103)){
+                    toast.info('Account not authorized');
+                    return;
+                }
+                navigate('/dashboard/users');
+                break;
+            case 'viewDepartments':
+                navigate('/dashboard/departments');
+                break;
+            case 'viewBrands':
+                navigate('/dashboard/brands');
+                break;
+            case 'viewCategories':
+                navigate('/dashboard/categories');
+                break;
+            case 'myProfile':
+                navigate('/dashboard/profile');
+                break;
+        }
+	}
 
     const setPageChanged = async (pageNumber) => {
         try {
@@ -441,6 +478,7 @@ const Products = () => {
 
     return (
         <section className='container d-flex flex-column gap-4' style={{minHeight: '60vh'}}>
+            <OffcanvasMenu menuItems={offCanvasMenu} menuItemClick={handleOffCanvasMenuItemClick} />
             <Row className='d-flex align-items-center'>
                 <div className="d-flex flex-wrap gap-4 align-items-center col-12 col-md-10 mt-4" >
                     <img src={IMAGES.svg_user} alt ="Avatar" className="rounded-circle" width={100} height={100} />

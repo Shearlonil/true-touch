@@ -28,12 +28,28 @@ const useProductController = () => {
         }, {signal});
     }
     
+    const filterPaginateFetch = async (signal, data) => {
+        return await xhrAxios.get(`/products/query/filter`, {
+            params: {
+                pageSize: data.pageSize, 
+                brand: data.brand, 
+                page: data.page,
+                category: data.category,
+                name: data.name,
+            }
+        }, {signal});
+    }
+    
     const productSearch = async (signal, data) => {
         return await xhrAxios.get(`/products/query`, {
             params: {
                 str: data.inputValue, status: data.productStatus
             }
         }, {signal});
+    }
+    
+    const random = async (signal) => {
+        return await xhrAxios.get(`/products/random`, {signal});
     }
 
     return {
@@ -42,7 +58,9 @@ const useProductController = () => {
         updateProduct,
         activeProductPageInit,
         paginateFetch,
+        filterPaginateFetch,
         productSearch,
+        random,
     }
 }
 

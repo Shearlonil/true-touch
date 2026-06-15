@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Row, Col, Table, Modal } from 'react-bootstrap';
 import {
     LayoutDashboard, Package, ShoppingCart, Users, TrendingUp, DollarSign,
-    UserPen, Settings, LogOut, ChevronRight, ArrowUpRight, ArrowDownRight,
-    Clock, Eye, Search, Menu, X, LayoutPanelTop
+    UserPen, ChevronRight, ArrowUpRight, ArrowDownRight,
+    Clock, Eye, LayoutPanelTop
 } from 'lucide-react';
 import { SiBrandfetch } from "react-icons/si";
 import { MdOutlineCategory } from "react-icons/md";
@@ -64,7 +64,7 @@ const offCanvasMenu = [
             },
         ]
     },
-    { icon: ShoppingCart, label: 'Orders', onClickParams: {evtName: 'orders'} },
+    // { icon: ShoppingCart, label: 'Orders', onClickParams: {evtName: 'orders'} },
     { 
         icon: Package, 
         label: 'Products', 
@@ -121,7 +121,7 @@ const offCanvasMenu = [
             },
         ]
     },
-    { icon: Users, label: 'Customers', onClickParams: {evtName: 'customers'} },
+    // { icon: Users, label: 'Customers', onClickParams: {evtName: 'customers'} },
     { icon: UserPen, label: 'Profile', onClickParams: {evtName: 'myProfile'} },
 ];
 
