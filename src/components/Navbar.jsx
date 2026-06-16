@@ -16,7 +16,6 @@ const navLinks = [
     { label: 'About Us', path: '/about' },
     { label: 'Products', path: '/products' },
     { label: 'Contact', path: '/contact' },
-    { label: 'Dashboard', path: '/dashboard' },
 ];
 
 const Navbar = () => {
@@ -121,6 +120,9 @@ const Navbar = () => {
                                     {link.label}
                                 </Link>
                             ))}
+                            {user && <Link to={'/dashboard'} className={`nav-link ${location.pathname === 'dashboard' ? 'active' : ''}`} onClick={() => setExpanded(false)} >
+                                Dashboard 
+                            </Link>}
                         </Nav>
                         <div className="d-flex align-items-center gap-1">
                             {/* <button className="nav-icon-btn"><Search size={20} /></button>
@@ -133,10 +135,11 @@ const Navbar = () => {
                                 Shop Now
                             </Link>
 
-                            {/* Desktop login/logout buttons */}
+                            {/* Desktop login/logout buttons
                             {!user && <Nav.Link className={`btn ms-2 ${isLoggingOut && "disabled"}`} onClick={() => navigate("/login")} >
                                 Login 
                             </Nav.Link>}
+                             */}
 
                             {user && <Nav.Link className={`btn text-white ms-2 ${isLoggingOut && "disabled"} ${user && 'text-danger'}`} onClick={() => confirmLogout()} >
                                 {isLoggingOut && ( <ThreeDotLoading color="#ffffffff" size="small" /> )}

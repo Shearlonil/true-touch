@@ -13,8 +13,7 @@ import {
     Clock,
     Loader2
 } from 'lucide-react';
-
-import IMAGES from '../assets/images';
+import { homePageGalleryData } from '../Utils/data';
 
 // Custom hook for intersection observer
 const useIntersectionObserver = (options) => {
@@ -114,194 +113,7 @@ const ImageGallery = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    const galleryData = {
-        store: {
-            title: 'Our Store',
-            icon: Store,
-            count: 8,
-            description: 'Explore our modern pharmacy, supermarket, and pet store facilities',
-            images: [
-                {
-                    id: 1,
-                    src: IMAGES.image10,
-                    title: 'Pharmacy Section',
-                    subtitle: 'Modern & Well-Organized',
-                    description: 'Our state-of-the-art pharmacy with comfortable waiting areas and professional service counters.',
-                    category: 'Pharmacy'
-                },
-                {
-                    id: 2,
-                    src: IMAGES.image54,
-                    title: 'Supermarket Aisles',
-                    subtitle: 'Fresh & Organized',
-                    description: 'Wide aisles stocked with quality groceries, household essentials, and fresh produce.',
-                    category: 'Supermarket'
-                },
-                // {
-                //     id: 3,
-                //     src: image03,
-                //     title: 'Pet Supplies Section',
-                //     subtitle: 'Everything for Pets',
-                //     description: 'Premium pet food, toys, accessories, and healthcare products for your furry friends.',
-                //     category: 'Pet Store'
-                // },
-                {
-                    id: 4,
-                    src: IMAGES.image06,
-                    title: 'Drug Dispensation',
-                    subtitle: 'Professional Service',
-                    description: 'Our licensed pharmacists ready to assist with prescriptions and health consultations.',
-                    category: 'Pharmacy'
-                },
-                // {
-                //     id: 5,
-                //     src: image05,
-                //     title: 'Fresh Produce Area',
-                //     subtitle: 'Farm Fresh Daily',
-                //     description: 'Fresh fruits and vegetables sourced from local farms and trusted suppliers.',
-                //     category: 'Supermarket'
-                // },
-                // {
-                //     id: 6,
-                //     src: image06,
-                //     title: 'Pet Care Corner',
-                //     subtitle: 'Pet Wellness',
-                //     description: 'Dedicated section for pet healthcare, grooming supplies, and expert advice.',
-                //     category: 'Pet Store'
-                // },
-                // {
-                //     id: 7,
-                //     src: image07,
-                //     title: 'Store Entrance',
-                //     subtitle: 'Welcome to Truetouch',
-                //     description: 'Our welcoming entrance designed for easy access and convenient shopping.',
-                //     category: 'Store'
-                // },
-                {
-                  id: 8,
-                      src: IMAGES.image02,
-                      title: 'Enquiries',
-                      subtitle: 'Private & Comfortable',
-                      description: 'Private spaces for health consultations and personalized service.',
-                      category: 'Pharmacy'
-                }
-            ]
-        },
-        staff: {
-            title: 'Our Team',
-            icon: Users,
-            count: 6,
-            description: 'Meet our dedicated team of professionals',
-            images: [
-                {
-                    id: 1,
-                    src: IMAGES.image08,
-                    title: 'Pharmacy Team',
-                    subtitle: 'Licensed Professionals',
-                    description: 'Our certified pharmacists with years of experience in pharmaceutical care.',
-                    category: 'Staff'
-                },
-                {
-                    id: 2,
-                    src: IMAGES.image60,
-                    title: 'Customer Service',
-                    subtitle: 'Friendly & Helpful',
-                    description: 'Dedicated customer service team ready to assist with all your shopping needs.',
-                    category: 'Staff'
-                },
-                // {
-                //     id: 3,
-                //     src: image11,
-                //     title: 'Management Team',
-                //     subtitle: 'Leadership Excellence',
-                //     description: 'Experienced leadership committed to quality service and customer satisfaction.',
-                //     category: 'Staff'
-                // },
-                // {
-                //     id: 4,
-                //     src: image12,
-                //     title: 'Pet Care Specialists',
-                //     subtitle: 'Pet Experts',
-                //     description: 'Knowledgeable staff trained in pet care, nutrition, and product recommendations.',
-                //     category: 'Staff'
-                // },
-                // {
-                //   id: 5,
-                //   src: IMAGES.image62,
-                //   title: 'Grocery Team',
-                //   subtitle: 'Fresh & Quality',
-                //   description: 'Team dedicated to maintaining fresh produce and quality grocery standards.',
-                //   category: 'Staff'
-                // },
-                // {
-                //     id: 6,
-                //     src: image14,
-                //     title: 'Delivery Team',
-                //     subtitle: 'Fast & Reliable',
-                //     description: 'Our delivery personnel ensuring your orders reach you on time.',
-                //     category: 'Staff'
-                // }
-            ]
-        },
-        customers: {
-            title: 'Happy Customers',
-            icon: Heart,
-            count: 6,
-            description: 'Moments with our valued customers',
-            images: [
-                {
-                    id: 1,
-                    src: IMAGES.image61,
-                    title: 'Family Shopping',
-                    subtitle: 'One-Stop Shopping',
-                    description: 'Families enjoying the convenience of pharmacy, groceries, and pet supplies in one place.',
-                    category: 'Customers'
-                },
-                {
-                    id: 2,
-                    src: IMAGES.image48,
-                    title: 'Health Consultation',
-                    subtitle: 'Expert Advice',
-                    description: 'Customers receiving personalized health consultations from our pharmacists.',
-                    category: 'Service'
-                },
-                // {
-                //     id: 3,
-                //     src: image17,
-                //     title: 'Pet Parents',
-                //     subtitle: 'Pet Lovers',
-                //     description: 'Pet owners finding the perfect products for their beloved companions.',
-                //     category: 'Customers'
-                // },
-                {
-                    id: 4,
-                    src: IMAGES.image01,
-                    title: 'Quick Checkout',
-                    subtitle: 'Efficient Service',
-                    description: 'Fast and efficient checkout process for a smooth shopping experience.',
-                    category: 'Service'
-                },
-                // {
-                //     id: 5,
-                //     src: image19,
-                //     title: 'Senior Care',
-                //     subtitle: 'Special Attention',
-                //     description: 'Providing extra care and assistance for our elderly customers.',
-                //     category: 'Service'
-                // },
-                {
-                    id: 6,
-                    src: IMAGES.image68,
-                    title: 'Community Love',
-                    subtitle: '25+ Years of Trust',
-                    description: 'Building lasting relationships with our community over two decades.',
-                    category: 'Community'
-                }
-            ]
-        }
-    };
-
-    const currentData = galleryData[activeTab];
+    const currentData = homePageGalleryData[activeTab];
 
     const openLightbox = useCallback((image, index) => {
         setSelectedImage(image);
@@ -355,7 +167,7 @@ const ImageGallery = () => {
             <Container>
                 <div className="gallery-tabs-wrapper">
                     <div className="gallery-tabs-modern">
-                        {Object.entries(galleryData).map(([key, data]) => {
+                        {Object.entries(homePageGalleryData).map(([key, data]) => {
                             const TabIcon = data.icon;
                             return (
                                 <button
@@ -401,7 +213,7 @@ const ImageGallery = () => {
                     <div className="stat-item">
                         <Clock size={24} />
                         <div>
-                            <span className="stat-value">25+</span>
+                            <span className="stat-value">5+</span>
                             <span className="stat-label">Years Experience</span>
                         </div>
                     </div>
@@ -409,7 +221,7 @@ const ImageGallery = () => {
                     <div className="stat-item">
                         <Heart size={24} />
                         <div>
-                            <span className="stat-value">50K+</span>
+                            <span className="stat-value">5K+</span>
                             <span className="stat-label">Happy Customers</span>
                         </div>
                     </div>

@@ -1,14 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import { Truck, Shield, Clock, HeartPulse, ShoppingBasket, Award } from 'lucide-react';
-
-const features = [
-    { icon: Truck, title: 'Free Delivery', desc: 'Free shipping on orders over ₦25,000. Fast and reliable delivery for all your shopping needs.' },
-    { icon: Shield, title: 'Quality Guaranteed', desc: '100% authentic products from medicines to groceries and pet supplies - all sourced from trusted suppliers.' },
-    { icon: Clock, title: '24/7 Support', desc: 'Round-the-clock customer support for all your shopping queries and emergency needs.' },
-    { icon: HeartPulse, title: 'Pet Mart', desc: 'Professional pet care advice and premium pet healthcare products for your beloved companions.' },
-    { icon: ShoppingBasket, title: 'One-Stop Shop', desc: 'Everything you need - pharmacy, fresh groceries, household items, and premium pet supplies under one roof.' },
-    { icon: Award, title: '25+ Years Trusted', desc: 'Over two decades of serving our community with excellence, quality, and dedication.' },
-];
+import { homePageFeatures } from '../Utils/data';
 
 const FeaturesSection = () => {
     return (
@@ -22,7 +13,7 @@ const FeaturesSection = () => {
                     </p>
                 </div>
                 <Row className="g-4">
-                    {features.map((feature, index) => {
+                    {homePageFeatures.map((feature, index) => {
                         const Icon = feature.icon;
                         return (
                             <Col key={index} md={6} lg={4}>

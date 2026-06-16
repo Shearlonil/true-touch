@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container, Row, Col, Accordion } from 'react-bootstrap';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 
-import Footer from '../components/Footer.jsx';
+import ChatWithUs from '../components/ChatWithUs.jsx';
 
 const contactInfo = [
     { icon: Phone, title: 'Phone', detail: '+234 (0) 800 123 4567', sub: 'Mon-Sun, 24hrs' },
@@ -74,7 +74,7 @@ const Contact = () => {
                             })}
                         </Row>
 
-                        {/* Contact Form + FAQ */}
+                        {/* Contact Form + FAQ
                         <Row className="g-5">
                             <Col lg={7}>
                                 <h3 className="mb-4">Send Us a Message</h3>
@@ -134,9 +134,11 @@ const Contact = () => {
                                 </Accordion>
                             </Col>
                         </Row>
+                         */}
                     </Container>
                 </section>
             </main>
+            <ChatWithUs />
         </div>
     );
 };

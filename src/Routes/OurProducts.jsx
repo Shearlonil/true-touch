@@ -14,6 +14,7 @@ import { pageSizeOptions } from "../Utils/data";
 import { Product } from "../Entities/Product";
 import useProductController from "../api-controllers/product-controller-hook";
 import useGenericController from "../api-controllers/generic-controller-hook";
+import ChatWithUs from '../components/ChatWithUs';
 
 const formatNaira = (amount) => `₦${amount.toLocaleString()}`;
 
@@ -53,11 +54,6 @@ const OurProducts = () => {
     const [products, setProducts] = useState([]);
     
     useEffect(() => {
-        if(!user){
-            navigate("/");
-            return;
-        }
-
         initialize();
         return () => {
             // This cleanup function runs when the component unmounts or when the dependencies of useEffect change (e.g., route change)
@@ -472,6 +468,7 @@ const OurProducts = () => {
                     />
                 </Row>
             </section>
+            <ChatWithUs />
         </>
     )
 }

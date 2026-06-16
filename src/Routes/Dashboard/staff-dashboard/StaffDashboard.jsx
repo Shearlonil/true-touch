@@ -25,27 +25,27 @@ import ProductCreationForm from '../../../components/Forms/ProductCreationForm';
 import useProductController from '../../../api-controllers/product-controller-hook';
 
 const stats = [
-    { label: 'Total Revenue for the Month', value: '₦7,244,250', change: '+12.5%', up: true, icon: DollarSign, color: 'rgba(var(--mc-primary-rgb), 0.12)', iconColor: 'var(--mc-primary)' },
-    { label: 'Total Orders for the Month', value: '1,248', change: '+8.3%', up: true, icon: ShoppingCart, color: 'rgba(var(--mc-accent-rgb), 0.12)', iconColor: 'var(--mc-accent)' },
-    { label: 'Total Customers', value: '3,562', change: '+5.7%', up: true, icon: Users, color: 'rgba(99, 102, 241, 0.12)', iconColor: '#6366f1' },
-    { label: 'Total Active Products', value: '23.8%', change: '-2.1%', up: false, icon: TrendingUp, color: 'rgba(236, 72, 153, 0.12)', iconColor: '#ec4899' },
+    { label: 'Total Revenue for the Month', value: '₦0', change: '+0%', up: true, icon: DollarSign, color: 'rgba(var(--mc-primary-rgb), 0.12)', iconColor: 'var(--mc-primary)' },
+    { label: 'Total Orders for the Month', value: '0', change: '+0%', up: true, icon: ShoppingCart, color: 'rgba(var(--mc-accent-rgb), 0.12)', iconColor: 'var(--mc-accent)' },
+    { label: 'Total Customers', value: '0', change: '+0%', up: true, icon: Users, color: 'rgba(99, 102, 241, 0.12)', iconColor: '#6366f1' },
+    { label: 'Total Active Products', value: '0%', change: '0%', up: false, icon: TrendingUp, color: 'rgba(236, 72, 153, 0.12)', iconColor: '#ec4899' },
 ];
 
 const recentOrders = [
-    { id: '#ORD-7821', customer: 'Sarah Johnson', products: 'Vitamin D3, Omega-3', total: '₦31,000', status: 'Delivered', statusColor: 'bg-success' },
-    { id: '#ORD-7820', customer: 'Michael Chen', products: 'First Aid Kit Pro', total: '₦27,500', status: 'Processing', statusColor: 'bg-warning' },
-    { id: '#ORD-7819', customer: 'Emily Rodriguez', products: 'Multivitamin, Sanitizer', total: '₦13,000', status: 'Shipped', statusColor: 'bg-info' },
-    { id: '#ORD-7818', customer: 'David Kim', products: 'Blood Pressure Monitor', total: '₦45,000', status: 'Delivered', statusColor: 'bg-success' },
-    { id: '#ORD-7817', customer: 'Amanda White', products: 'Immune Boost, Vitamin C', total: '₦19,000', status: 'Pending', statusColor: 'bg-secondary' },
-    { id: '#ORD-7816', customer: 'James Brown', products: 'Digital Thermometer', total: '₦8,500', status: 'Delivered', statusColor: 'bg-success' },
+    // { id: '#ORD-7821', customer: 'Sarah Johnson', products: 'Vitamin D3, Omega-3', total: '₦31,000', status: 'Delivered', statusColor: 'bg-success' },
+    // { id: '#ORD-7820', customer: 'Michael Chen', products: 'First Aid Kit Pro', total: '₦27,500', status: 'Processing', statusColor: 'bg-warning' },
+    // { id: '#ORD-7819', customer: 'Emily Rodriguez', products: 'Multivitamin, Sanitizer', total: '₦13,000', status: 'Shipped', statusColor: 'bg-info' },
+    // { id: '#ORD-7818', customer: 'David Kim', products: 'Blood Pressure Monitor', total: '₦45,000', status: 'Delivered', statusColor: 'bg-success' },
+    // { id: '#ORD-7817', customer: 'Amanda White', products: 'Immune Boost, Vitamin C', total: '₦19,000', status: 'Pending', statusColor: 'bg-secondary' },
+    // { id: '#ORD-7816', customer: 'James Brown', products: 'Digital Thermometer', total: '₦8,500', status: 'Delivered', statusColor: 'bg-success' },
 ];
 
 const topProducts = [
-    { name: 'Vitamin D3 Complex', sold: 342, revenue: '₦4,275,000' },
-    { name: 'Omega-3 Fish Oil', sold: 287, revenue: '₦5,309,500' },
-    { name: 'Daily Multivitamin', sold: 264, revenue: '₦2,508,000' },
-    { name: 'First Aid Kit Pro', sold: 198, revenue: '₦5,445,000' },
-    { name: 'Immune Boost Tablets', sold: 176, revenue: '₦2,024,000' },
+    // { name: 'Vitamin D3 Complex', sold: 342, revenue: '₦4,275,000' },
+    // { name: 'Omega-3 Fish Oil', sold: 287, revenue: '₦5,309,500' },
+    // { name: 'Daily Multivitamin', sold: 264, revenue: '₦2,508,000' },
+    // { name: 'First Aid Kit Pro', sold: 198, revenue: '₦5,445,000' },
+    // { name: 'Immune Boost Tablets', sold: 176, revenue: '₦2,024,000' },
 ];
 
 const offCanvasMenu = [
@@ -265,6 +265,14 @@ const Dashboard = () => {
                 break;
         }
 	}
+
+    const btnAddProductClick = () => {
+        if(!user.hasAuth(200)){
+            toast.info('Account not authorized');
+            return;
+        }
+        handleAddProduct();
+    }
   
     const handleCreateStaff = async () => {
         try {
@@ -487,7 +495,7 @@ const Dashboard = () => {
                     <Row className="g-4">
                         {/* Recent Orders */}
                         <Col xl={8}>
-                            <div className="bg-white rounded-custom p-4" style={{ border: '1px solid var(--mc-border)' }}>
+                            <div className="bg-white rounded-custom p-4 h-100" style={{ border: '1px solid var(--mc-border)' }}>
                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                     <h5 className="mb-0" style={{ fontSize: '1.1rem' }}>Recent Orders</h5>
                                     <a href="#" style={{ fontSize: '0.85rem', color: 'var(--mc-primary)', fontWeight: 600 }}>
@@ -547,7 +555,7 @@ const Dashboard = () => {
                             <div className="bg-white rounded-custom p-4 mt-4" style={{ border: '1px solid var(--mc-border)' }}>
                                 <h5 style={{ fontSize: '1.1rem' }} className="mb-3">Quick Actions</h5>
                                 <div className="d-grid gap-2">
-                                    <button className="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-2">
+                                    <button className="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-2" onClick={btnAddProductClick}>
                                         <Package size={16} /> Add New Product
                                     </button>
                                     <button className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-2">

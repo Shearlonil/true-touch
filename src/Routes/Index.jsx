@@ -4,6 +4,7 @@ import ProductsSection from '../components/ProductsSection.jsx';
 import ImageGallery from '../components/ImageGallery.jsx';
 import TestimonialsSection from '../components/TestimonialsSection.jsx';
 import CTASection from '../components/CTASection.jsx';
+import ChatWithUs from '../components/ChatWithUs';
 
 const Index = () => {
     return (
@@ -15,6 +16,7 @@ const Index = () => {
                 <ImageGallery />
                 <TestimonialsSection />
                 <CTASection />
+                <ChatWithUs />
             </main>
         </div>
     );

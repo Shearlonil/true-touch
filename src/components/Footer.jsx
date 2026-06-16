@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { getYear } from "date-fns";
 
 import IMAGES from '../assets/images';
 
@@ -10,7 +11,6 @@ const Footer = () => {
         { label: 'About Us', path: '/about' },
         { label: 'Products', path: '/products' },
         { label: 'Contact', path: '/contact' },
-        { label: 'Dashboard', path: '/dashboard' },
     ];
 
     const services = ['Prescription Filling', 'Grocery Shopping', 'Pet Care Products', 'Home Delivery', 'Health Products'];
@@ -58,7 +58,7 @@ const Footer = () => {
                         <ul className="list-unstyled">
                             {services.map((item) => (
                                 <li key={item} className="mb-2">
-                                    <a href="#">{item}</a>
+                                    <span>{item}</span>
                                 </li>
                             ))}
                         </ul>
@@ -90,7 +90,7 @@ const Footer = () => {
             </Container>
             <div className="footer-bottom">
                 <Container className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                    <span>© 2026 Truetouch Pharmacy, Supermarket & Pet Store. All rights reserved.</span>
+                    <span>© {getYear(new Date())} Truetouch Pharmacy, Supermarket & Pet Store. All rights reserved.</span>
                     <span className="d-flex gap-2 justify-content-center align-items-center">
                         <p className="text-center small mb-0 fw-bold">
                             Powered By 
