@@ -5,10 +5,10 @@ import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 import ChatWithUs from '../components/ChatWithUs.jsx';
 
 const contactInfo = [
-    { icon: Phone, title: 'Phone', detail: '+234 (0) 800 123 4567', sub: 'Mon-Sun, 24hrs' },
-    { icon: Mail, title: 'Email', detail: 'info@truetouchpharmacy.com', sub: 'We reply within 24 hours' },
-    { icon: MapPin, title: 'Address', detail: '123 Health Street', sub: 'Abeokuta, Nigeria' },
-    { icon: Clock, title: 'Working Hours', detail: 'Mon - 24hrs - 9PM', sub: 'Mon - Sun: 24hrs' },
+    { icon: Phone, title: 'Phone', detail: '+234 (0) 814 799 6280', sub: 'Mon-Sun, 24hrs' },
+    { icon: Mail, title: 'Email', detail: 'truetouchpharmacyandstores@gmail.com', sub: 'We reply within 24 hours' },
+    { icon: MapPin, title: 'Address', detail: 'Old Wema Bank Building, Lafenwa', sub: 'Abeokuta, Nigeria' },
+    { icon: Clock, title: 'Working Hours', detail: 'Mon - Sun', sub: 'Mon - Sun: 24hrs' },
 ];
 
 const faqs = [

@@ -1,7 +1,10 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import { Heart, Users, Award, Shield, Target, Leaf, Eye, Handshake } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const About = () => {
+    const navigate = useNavigate();
+
     return (
         <main>
             {/* Page Header */}
@@ -28,16 +31,16 @@ const About = () => {
                             <span className="section-badge">Our Mission</span>
                             <h2 className="section-title">Dedicated to Your Complete Shopping Needs</h2>
                             <p className="text-muted-custom" style={{ lineHeight: 1.8 }}>
-                                Since 2001, Truetouch has been a cornerstone of our community, offering more than just pharmacy services. 
+                                Truetouch has been a cornerstone of our community, offering more than just pharmacy services. 
                                 We believe that everyone deserves access to quality medications, fresh groceries, premium pet supplies, 
                                 and exceptional service all under one roof.
                             </p>
                             <p className="text-muted-custom" style={{ lineHeight: 1.8 }}>
-                                Our team of licensed pharmacists, grocery experts, and pet care specialists work tirelessly to ensure 
-                                you receive the best possible service. From prescription medications to fresh produce and premium pet food, 
+                                Our team of licensed pharmacists, grocery experts, and pet products experts work tirelessly to ensure 
+                                you receive the best possible services. From pharmacare products to fresh groceries and premium pet products, 
                                 we're here to support your complete shopping experience.
                             </p>
-                            <a href="/contact" className="btn btn-primary mt-2">Get in Touch</a>
+                            <a className="btn btn-primary mt-2" onClick={() => navigate('/contact')}>Get in Touch</a>
                         </Col>
                         <Col lg={6}>
                             <div className="rounded-custom overflow-hidden" style={{ 
@@ -60,7 +63,7 @@ const About = () => {
                     <Row>
                         <Col sm={6} lg={3}>
                             <div className="stat-card">
-                                <div className="stat-number">5+</div>
+                                <div className="stat-number">3+</div>
                                 <p className="text-muted-custom mt-2 mb-0" style={{ fontWeight: 500 }}>Years of Service</p>
                             </div>
                         </Col>
@@ -155,7 +158,7 @@ const About = () => {
                 </Container>
             </section>
 
-            {/* Team */}
+            {/* Team
             <section className="bg-section section-padding">
                 <Container>
                     <div className="text-center mb-5">
@@ -197,6 +200,7 @@ const About = () => {
                     </Row>
                 </Container>
             </section>
+             */}
         </main>
     );
 };

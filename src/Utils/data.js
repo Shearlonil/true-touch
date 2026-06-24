@@ -28,21 +28,21 @@ const homePageFeatures = [
 
 const testimonials = [
   {
-    name: 'Sarah Johnson',
+    name: 'Olayemi Zeenat',
     role: 'Regular Customer',
-    initial: 'S',
+    initial: 'O',
     rating: 5,
     text: "Truetouch has been my go-to pharmacy for years. The staff is incredibly knowledgeable and always takes the time to explain my medications. Their delivery service is a lifesaver!",
   },
   {
-    name: 'Michael Chen',
+    name: 'Makinde Olamide',
     role: 'Health Enthusiast',
     initial: 'M',
     rating: 4,
     text: "I love the wide range of health and wellness products they carry. The quality is always top-notch, and the prices are very competitive. Highly recommend!",
   },
   {
-    name: 'Emily Rodriguez',
+    name: 'Boluwatife Sobola',
     role: 'Mother of Three',
     initial: 'E',
     rating: 5,

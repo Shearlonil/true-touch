@@ -11,7 +11,7 @@ const style = {
 const ChatWithUs = () => {
     return (
         <div style={style} className='position-fixed bg-primary m-2 p-2 rounded-pill'>
-            <a target={"_blank"} rel={"noreferrer"} className='text-white text-decoration-none' href="https://wa.me/2348034262759">Chat with Us</a>
+            <a target={"_blank"} rel={"noreferrer"} className='text-white text-decoration-none' href="https://wa.me/2348147996280">Chat with Us</a>
         </div>
     );
 }

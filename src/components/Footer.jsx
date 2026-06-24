@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { PiTiktokLogoLight } from "react-icons/pi";
 import { getYear } from "date-fns";
 
 import IMAGES from '../assets/images';
@@ -13,7 +14,30 @@ const Footer = () => {
         { label: 'Contact', path: '/contact' },
     ];
 
-    const services = ['Prescription Filling', 'Grocery Shopping', 'Pet Care Products', 'Home Delivery', 'Health Products'];
+    const socialMedia = [
+        // {
+        //     Icon: Facebook, 
+        //     addy: ''
+        // }, 
+        // {
+        //     Icon: Twitter,
+        //     addy: ''
+        // }, 
+        {
+            Icon: Instagram,
+            addy: 'https://instagram.com/truetouchpharmacyandstore'
+        }, 
+        // {
+        //     Icon: Youtube, 
+        //     addy: ''
+        // }, 
+        {
+            Icon: PiTiktokLogoLight,
+            addy: 'https://vm.tiktok.com/ZS96Jfjuy66Y1-GoDQU/'//'@true.touchpharmacy'
+        }
+    ];
+
+    const services = ['Grocery Shopping', 'Pet Care Products', 'Health Care Products'];
 
     return (
         <footer className="footer">
@@ -29,11 +53,11 @@ const Footer = () => {
                         </div>
                         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', lineHeight: 1.7 }}>
                             Your trusted neighborhood store committed to providing quality pharmacy products, 
-                            fresh groceries, premium pet supplies, and personalized service for over 25 years.
+                            fresh groceries, premium pet supplies, and personalized service for over 3+ years.
                         </p>
                         <div className="d-flex">
-                          {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
-                                <a key={i} href="#" className="footer-social-icon">
+                          {socialMedia.map(({Icon, addy}, i) => (
+                                <a key={i} href={addy} className="footer-social-icon">
                                     <Icon size={16} />
                                 </a>
                             ))}
@@ -70,19 +94,19 @@ const Footer = () => {
                         <ul className="list-unstyled">
                             <li className="d-flex align-items-start gap-2 mb-3">
                                 <MapPin size={18} style={{ color: 'var(--mc-primary)', flexShrink: 0, marginTop: 2 }} />
-                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>123 Health Street, Lagos, Nigeria</span>
+                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>Old Wema Bank Building, Lafenwa, Abeokuta, Nigeria</span>
                             </li>
                             <li className="d-flex align-items-center gap-2 mb-3">
                                 <Phone size={18} style={{ color: 'var(--mc-primary)', flexShrink: 0 }} />
-                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>+234 (0) 800 123 4567</span>
+                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>+234 (0) 814 799 6280</span>
                             </li>
                             <li className="d-flex align-items-center gap-2 mb-3">
                                 <Mail size={18} style={{ color: 'var(--mc-primary)', flexShrink: 0 }} />
-                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>info@truetouchpharmacy.com</span>
+                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>truetouchpharmacyandstores@gmail.com</span>
                             </li>
                             <li className="d-flex align-items-center gap-2">
                                 <Clock size={18} style={{ color: 'var(--mc-primary)', flexShrink: 0 }} />
-                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>Mon - Sat: 8AM - 9PM</span>
+                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>Mon - Sat: 24hrs</span>
                             </li>
                         </ul>
                     </Col>

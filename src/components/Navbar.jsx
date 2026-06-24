@@ -70,7 +70,7 @@ const Navbar = () => {
                     <div className="d-flex align-items-center gap-4">
                         <span className="d-flex align-items-center gap-1">
                             <Phone size={13} />
-                            +234 (0) 800 123 4567
+                            +234 (0) 814 799 6280
                         </span>
                         <span className="d-flex align-items-center gap-1">
                             <Clock size={13} />
