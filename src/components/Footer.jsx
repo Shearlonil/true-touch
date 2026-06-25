@@ -106,7 +106,7 @@ const Footer = () => {
                             </li>
                             <li className="d-flex align-items-center gap-2">
                                 <Clock size={18} style={{ color: 'var(--mc-primary)', flexShrink: 0 }} />
-                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>Mon - Sat: 24hrs</span>
+                                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>Mon - Sun: 24hrs</span>
                             </li>
                         </ul>
                     </Col>

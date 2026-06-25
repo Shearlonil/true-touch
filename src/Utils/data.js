@@ -23,7 +23,7 @@ const homePageFeatures = [
     { icon: Clock, title: '24/7 Support', desc: 'Round-the-clock customer support for all your shopping queries and emergency needs.' },
     { icon: HeartPulse, title: 'Pet Mart', desc: 'Professional pet care advice and premium pet healthcare products for your beloved companions.' },
     { icon: ShoppingBasket, title: 'One-Stop Shop', desc: 'Everything you need - pharmacy, fresh groceries, household items, and premium pet supplies under one roof.' },
-    { icon: Award, title: '25+ Years Trusted', desc: 'Over two decades of serving our community with excellence, quality, and dedication.' },
+    { icon: Award, title: '3+ Years Trusted', desc: 'Over three years of serving our community with excellence, quality, and dedication.' },
 ];
 
 const testimonials = [
@@ -264,7 +264,7 @@ const homePageGalleryData = {
 				id: 6,
 				src: IMAGES.image68,
 				title: 'Community Love',
-				subtitle: '25+ Years of Trust',
+				subtitle: '3+ Years of Trust',
 				description: 'Building lasting relationships with our community over two decades.',
 				category: 'Community'
 			}

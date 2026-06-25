@@ -213,7 +213,7 @@ const ImageGallery = () => {
                     <div className="stat-item">
                         <Clock size={24} />
                         <div>
-                            <span className="stat-value">5+</span>
+                            <span className="stat-value">3+</span>
                             <span className="stat-label">Years Experience</span>
                         </div>
                     </div>
